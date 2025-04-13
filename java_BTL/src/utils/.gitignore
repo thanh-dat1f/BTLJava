@@ -2,3 +2,6 @@
 /FileExporter.class
 /DatabaseConnection.class
 /SceneSwitcher.class
+/EmailUtil.class
+/RoleChecker.class
+/Session.class

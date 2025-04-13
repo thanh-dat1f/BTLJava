@@ -12,3 +12,14 @@
 /testPetDAO.class
 /testStaffDAO.class
 /testTypePetDAO.class
+/TestInvoiceRepository.class
+/testAccountRepository.class
+/testCustomerRepository.class
+/testOrderRepository.class
+/testPaymentStatusRepository.class
+/testPetRepository.class
+/testRoleRepository.class
+/testServiceRepository.class
+/testStaffRepository.class
+/testTypePetRepository.class
+/testTypeServiceRepository.class

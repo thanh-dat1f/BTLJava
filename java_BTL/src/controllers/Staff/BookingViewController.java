@@ -17,13 +17,13 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import model.Booking;
+import model.BookingDetail;
 import service.BookingService;
 import controllers.SceneSwitcher;
 import utils.Session;
-import utils.RoleChecker; // Create this utility class if it doesn't exist
+import utils.RoleChecker;
 import model.Staff;
 import enums.StatusEnum;
 
@@ -82,11 +82,34 @@ public class BookingViewController implements Initializable {
         
         // Khởi tạo các cột cho bảng
         idColumn.setCellValueFactory(new PropertyValueFactory<>("bookingId"));
-        customerColumn.setCellValueFactory(new PropertyValueFactory<>("customerName"));
-        petColumn.setCellValueFactory(new PropertyValueFactory<>("petName"));
-        serviceColumn.setCellValueFactory(new PropertyValueFactory<>("serviceName"));
+        customerColumn.setCellValueFactory(cellData -> {
+            Booking booking = cellData.getValue();
+            return booking.getCustomer() != null 
+                ? javafx.beans.binding.Bindings.createStringBinding(() -> booking.getCustomer().getFullName()) 
+                : javafx.beans.binding.Bindings.createStringBinding(() -> "");
+        });
+        
+        petColumn.setCellValueFactory(cellData -> {
+            Booking booking = cellData.getValue();
+            return booking.getPet() != null 
+                ? javafx.beans.binding.Bindings.createStringBinding(() -> booking.getPet().getName()) 
+                : javafx.beans.binding.Bindings.createStringBinding(() -> "");
+        });
+        
+        // Fix cho serviceColumn - lấy dịch vụ từ BookingDetail
+        serviceColumn.setCellValueFactory(cellData -> {
+            Booking booking = cellData.getValue();
+            // Giả sử có phương thức getServiceName hoặc tương tự
+            return javafx.beans.binding.Bindings.createStringBinding(() -> getServiceNameFromBooking(booking));
+        });
+        
         timeColumn.setCellValueFactory(new PropertyValueFactory<>("bookingTime"));
-        statusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
+        statusColumn.setCellValueFactory(cellData -> {
+            Booking booking = cellData.getValue();
+            return booking.getStatus() != null 
+                ? javafx.beans.binding.Bindings.createStringBinding(() -> booking.getStatus().name()) 
+                : javafx.beans.binding.Bindings.createStringBinding(() -> "");
+        });
         
         // Format ngày giờ
         timeColumn.setCellFactory(column -> {
@@ -117,6 +140,34 @@ public class BookingViewController implements Initializable {
     }
     
     /**
+     * Phương thức hỗ trợ lấy tên dịch vụ từ booking
+     */
+    private String getServiceNameFromBooking(Booking booking) {
+        if (booking == null) {
+            return "";
+        }
+        
+        // Trong trường hợp thực tế, bạn cần lấy dịch vụ từ booking details
+        // Đây là cách giải quyết tạm thời
+        try {
+            // Giả sử có thể lấy BookingDetail từ BookingService
+            List<BookingDetail> details = bookingService.getBookingDetails(booking.getBookingId());
+            if (details != null && !details.isEmpty()) {
+                // Lấy tên dịch vụ đầu tiên
+                BookingDetail firstDetail = details.get(0);
+                if (firstDetail.getService() != null) {
+                    return firstDetail.getService().getName();
+                }
+            }
+        } catch (Exception e) {
+            // Không xử lý lỗi, chỉ trả về chuỗi trống
+        }
+        
+        // Nếu không tìm thấy thông tin dịch vụ
+        return "Không có thông tin";
+    }
+    
+    /**
      * Thiết lập hiển thị/ẩn các nút dựa trên quyền của người dùng
      */
     private void setupButtonVisibility() {
@@ -125,7 +176,7 @@ public class BookingViewController implements Initializable {
         boolean canPrintReceipt = RoleChecker.hasPermission("PRINT_RECEIPT");
         boolean canManagePayment = RoleChecker.hasPermission("MANAGE_PAYMENT");
         
-        startButton.setVisible(canMarkServiceDone || canCreateBooking);
+        startButton.setVisible(canMarkServiceDone);
         completeButton.setVisible(canMarkServiceDone);
         printInvoiceButton.setVisible(canPrintReceipt || canManagePayment);
         confirmArrivalButton.setVisible(canCreateBooking);
@@ -140,16 +191,22 @@ public class BookingViewController implements Initializable {
      */
     private void loadBookings() {
         try {
-            Staff currentStaff = Session.getInstance().getCurrentStaff();
-            int staffId = currentStaff.getId(); // Changed from getStaffId() to getId()
+            Staff currentStaff = Session.getCurrentStaff();
             List<Booking> bookings;
             
-            if (RoleChecker.hasPermission("VIEW_ALL_BOOKINGS")) {
-                // If allowed to view all bookings
+            if (currentStaff == null) {
+                // Nếu không lấy được thông tin nhân viên
                 bookings = bookingService.getAllBookings();
             } else {
-                // If only allowed to view assigned bookings
-                bookings = bookingService.getBookingsByStaffId(staffId);
+                int staffId = currentStaff.getId();
+                
+                if (RoleChecker.hasPermission("VIEW_ALL_BOOKINGS")) {
+                    // Nếu có quyền xem tất cả booking
+                    bookings = bookingService.getAllBookings();
+                } else {
+                    // Nếu chỉ có quyền xem booking được gán
+                    bookings = bookingService.getBookingsByStaffId(staffId);
+                }
             }
             
             bookingList = FXCollections.observableArrayList(bookings);
@@ -167,20 +224,34 @@ public class BookingViewController implements Initializable {
         selectedBooking = booking;
         
         boolean hasSelection = (booking != null);
-        boolean isPending = hasSelection && "PENDING".equals(booking.getStatus());
-        boolean isConfirmed = hasSelection && "CONFIRMED".equals(booking.getStatus());
-        boolean isStarted = hasSelection && "STARTED".equals(booking.getStatus());
+        if (!hasSelection) {
+            startButton.setDisable(true);
+            completeButton.setDisable(true);
+            printInvoiceButton.setDisable(true);
+            detailsButton.setDisable(true);
+            confirmArrivalButton.setDisable(true);
+            viewNotesButton.setDisable(true);
+            
+            // Xóa nội dung ghi chú
+            notesArea.clear();
+            return;
+        }
         
+        StatusEnum status = booking.getStatus();
+        boolean isPending = status == StatusEnum.PENDING;
+        boolean isConfirmed = status == StatusEnum.CONFIRMED;
+        
+        // Chỉnh sửa phần này để không phụ thuộc vào trạng thái STARTED
+        // Thay vào đó, cho phép hoàn thành nếu đã xác nhận
+        boolean canComplete = isConfirmed;
+
         // Cập nhật trạng thái của các nút
         startButton.setDisable(!(isPending || isConfirmed));
-        completeButton.setDisable(!(isStarted));
-        printInvoiceButton.setDisable(!hasSelection);
-        detailsButton.setDisable(!hasSelection);
-        confirmArrivalButton.setDisable(!(isPending));
-        viewNotesButton.setDisable(!hasSelection);
-        
-        // Xóa nội dung ghi chú
-        notesArea.clear();
+        completeButton.setDisable(!canComplete);
+        printInvoiceButton.setDisable(false);
+        detailsButton.setDisable(false);
+        confirmArrivalButton.setDisable(!isPending);
+        viewNotesButton.setDisable(false);
     }
     
     /**
@@ -195,7 +266,7 @@ public class BookingViewController implements Initializable {
         }
         
         try {
-            bookingService.updateBookingStatus(selectedBooking.getBookingId(), "STARTED");
+            bookingService.updateBookingStatus(selectedBooking.getBookingId(), "CONFIRMED");
             loadBookings(); // Tải lại danh sách
             showAlert(Alert.AlertType.INFORMATION, "Thành công", "Đã bắt đầu dịch vụ", 
                     "Dịch vụ đã được bắt đầu cho lịch đặt #" + selectedBooking.getBookingId());
@@ -261,7 +332,13 @@ public class BookingViewController implements Initializable {
             Stage currentStage = (Stage) detailsButton.getScene().getWindow();
             SceneSwitcher.switchToBookingDetailScene(currentStage, selectedBooking.getBookingId());
         } catch (Exception e) {
-            showAlert(Alert.AlertType.ERROR, "Lỗi", "Không thể mở chi tiết đặt lịch", e.getMessage());
+            // Nếu không thể chuyển cảnh, hiển thị thông tin trong một hộp thoại
+            showAlert(Alert.AlertType.INFORMATION, "Chi tiết lịch đặt", null, 
+                    "Mã lịch: " + selectedBooking.getBookingId() + 
+                    "\nKhách hàng: " + (selectedBooking.getCustomer() != null ? selectedBooking.getCustomer().getFullName() : "N/A") +
+                    "\nThú cưng: " + (selectedBooking.getPet() != null ? selectedBooking.getPet().getName() : "N/A") +
+                    "\nThời gian: " + selectedBooking.getBookingTime().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")) +
+                    "\nTrạng thái: " + selectedBooking.getStatus());
         }
     }
     

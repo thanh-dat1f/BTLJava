@@ -1,2 +1,9 @@
 /LoginController.class
 /RegisterController.class
+/BookingDetailController.class
+/CashierDashboardController.class
+/CreateInvoiceController.class
+/DashboardController.class
+/HomeController.class
+/InvoiceDetailController.class
+/SceneSwitcher.class

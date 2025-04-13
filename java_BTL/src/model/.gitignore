@@ -11,3 +11,14 @@
 /TypeService.class
 /Invoice.class
 /OrderDetail.class
+/AccountPermission.class
+/Appointment.class
+/Booking.class
+/BookingDetail.class
+/DashboardSummary.class
+/Permission.class
+/Person.class
+/PetType.class
+/Promotion.class
+/Schedule.class
+/WorkSchedule.class

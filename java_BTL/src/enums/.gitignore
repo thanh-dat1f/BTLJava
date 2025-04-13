@@ -3,3 +3,6 @@
 /StatusCode.class
 /TypeServiceEnum.class
 /TypeOrder.class
+/PaymentMethodEnum.class
+/Shift.class
+/StatusEnum.class

@@ -1,3 +1,13 @@
 /CustomerService.class
 /AccountService.class
 /StaffService.class
+/AuthService.class
+/BookingService.class
+/InvoiceService.class
+/OrderDetailService.class
+/OrderService.class
+/PermissionService.class
+/PetService.class
+/PromotionService.class
+/ScheduleService.class
+/ServiceService.class
