@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="controllers.customer.BookAppointmentController"
+            stylesheets="@/styles/customer_dashboard.css">
+
+    <!-- Menu bar -->
+    <top>
+        <HBox spacing="10" alignment="CENTER_RIGHT" styleClass="menu-bar">
+            <padding><Insets top="0" right="20" bottom="0" left="0"/></padding>
+            <Label fx:id="lblWelcome" text="Chào mừng, [Tên người dùng]" styleClass="welcome-label"/>
+            <Button fx:id="btnLogout" text="Đăng xuất" styleClass="logout-button" onAction="#handleLogout"/>
+        </HBox>
+    </top>
+
+    <!-- Tiêu đề -->
+    <center>
+        <VBox alignment="TOP_CENTER" spacing="20" maxWidth="400">
+            <padding><Insets top="40" right="20" bottom="40" left="20"/></padding>
+
+            <!-- Tiêu đề Đặt lịch hẹn -->
+            <Label fx:id="lblTitle" text="Đặt lịch hẹn" styleClass="appointment-title"/>
+
+            <!-- Thông tin khách hàng -->
+            <VBox spacing="10">
+                <Label text="Thông tin khách hàng:" styleClass="section-title"/>
+                <Label fx:id="lblCustomerInfo" text="Tên khách hàng: Nguyễn Vương Khang" styleClass="info-label"/>
+                <Label fx:id="lblEmail" text="Email: example@example.com" styleClass="info-label"/>
+            </VBox>
+
+            <!-- Chọn dịch vụ -->
+            <VBox spacing="10">
+                <Label text="Chọn dịch vụ:" styleClass="section-title"/>
+                <ComboBox fx:id="cbServices" prefWidth="250" styleClass="combo-box"/>
+            </VBox>
+
+            <!-- Chọn ngày và giờ -->
+            <VBox spacing="10">
+                <Label text="Chọn ngày và giờ:" styleClass="section-title"/>
+                <DatePicker fx:id="dpDate" styleClass="date-picker"/>
+                <ComboBox fx:id="cbTime" prefWidth="250" styleClass="combo-box"/>
+            </VBox>
+
+            <!-- Thông tin đặt lịch -->
+            <VBox spacing="10">
+                <Label text="Thông tin đặt lịch:" styleClass="section-title"/>
+                <Label fx:id="lblBookingInfo" text="Thông tin lịch hẹn sẽ hiển thị ở đây." styleClass="info-label"/>
+            </VBox>
+
+            <!-- Nút đặt lịch -->
+            <Button fx:id="btnBookAppointment" text="Đặt lịch" onAction="#handleBookAppointment" styleClass="action-button"/>
+            <!-- Nút quay lại -->
+            <Button fx:id="btnBack" text="Quay lại" onAction="#handleBack" styleClass="action-button"/>
+        </VBox>
+    </center>
+</BorderPane>

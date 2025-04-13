@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controllers.admin.AccountController" stylesheets="@/styles/account.css">
+    
+    <center>
+        <VBox spacing="10" alignment="CENTER">
+            <Label text="THÔNG TIN TÀI KHOẢN ADMIN" styleClass="title"/>
+
+            <GridPane hgap="10" vgap="10">
+                <Label text="Tên đăng nhập:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                <TextField fx:id="usernameField" editable="false" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                <Label text="Họ tên:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                <TextField fx:id="fullNameField" editable="false" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                <Label text="Email:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                <TextField fx:id="emailField" editable="false" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                <Label text="SĐT:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                <TextField fx:id="phoneField" editable="false" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+                <Label text="Quyền:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                <TextField fx:id="roleField" editable="false" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+            </GridPane>
+
+            
+
+            <HBox spacing="10" alignment="CENTER">
+                <Button text="Chỉnh sửa" onAction="#handleEdit"/>
+                <Button text="Lưu" onAction="#handleSave" disable="true" fx:id="saveButton"/>
+                <Button text="Hủy" onAction="#handleCancel" disable="true" fx:id="cancelButton"/>
+                <Button text="Đổi mật khẩu" onAction="#handleShowChangePassword" fx:id="changePasswordButton"/>
+            </HBox>
+            <!-- Phần đổi mật khẩu ban đầu ẩn -->
+            <VBox fx:id="changePasswordBox" spacing="10" alignment="CENTER" visible="false">
+                <Label text="ĐỔI MẬT KHẨU" styleClass="title"/>
+
+                <GridPane hgap="10" vgap="10">
+                    <Label text="Mật khẩu cũ:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                    <PasswordField fx:id="currentPasswordField" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                    <Label text="Mật khẩu mới:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                    <PasswordField fx:id="newPasswordField" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                    <Label text="Xác nhận mật khẩu mới:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                    <PasswordField fx:id="confirmPasswordField" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                </GridPane>
+
+                <Button text="Đổi mật khẩu" onAction="#handleChangePassword" fx:id="changePasswordButton"/>
+            </VBox>
+        </VBox>
+    </center>
+</BorderPane>

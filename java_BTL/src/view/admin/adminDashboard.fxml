@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.geometry.Pos?>
+
+<BorderPane fx:controller="controllers.admin.AdminDashboardController"
+            xmlns:fx="http://javafx.com/fxml"
+            xmlns="http://javafx.com/javafx"
+            stylesheets="@/styles/staff.css">
+
+    <!-- Thanh menu và nút quản lý tài khoản nằm ngang trên cùng -->
+    <top>
+        <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-background-color: #d88e3f; -fx-padding: 10;">
+            
+            <!-- Các nút quản lý bên trái -->
+            <Button text="Quản lý nhân viên" fx:id="btnManageStaff" />
+            <Button text="Quản lý khách hàng" fx:id="btnManageCustomers" />
+            <Button text="Quản lý dịch vụ" fx:id="btnManageServices" />
+            
+            <!-- Dùng Region để tạo khoảng cách, đẩy nút quản lý tài khoản ra ngoài bên phải -->
+            <Region HBox.hgrow="ALWAYS" />
+            
+            <!-- Nút quản lý tài khoản nằm bên phải -->
+            <Button text="Quản lý tài khoản" fx:id="btnManageAccount" />
+        </HBox>
+    </top>
+
+    <!-- Phần nội dung thay đổi ở trung tâm -->
+    <center>
+        <ScrollPane fx:id="scrollPane" fitToWidth="true" fitToHeight="true" hbarPolicy="ALWAYS" vbarPolicy="ALWAYS">
+            <VBox fx:id="mainContent" style="-fx-background-color: #f9f3e6; -fx-padding: 20px;">
+                <!-- Phần nội dung chính -->
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane>

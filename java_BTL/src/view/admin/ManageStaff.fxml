@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml"
+	fx:controller="controllers.admin.StaffController"
+    stylesheets="@/styles/style.css"> 
+    
+	<VBox AnchorPane.topAnchor="0"
+		AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"
+		AnchorPane.rightAnchor="0">
+
+		<Label text="Quản Lý Nhân Viên"
+			styleClass="label" /> <!-- Thêm styleClass -->
+
+		<!-- Các trường nhập liệu -->
+		<GridPane hgap="10" vgap="10">
+			<Label text="Họ tên:" GridPane.rowIndex="0"
+				GridPane.columnIndex="0" />
+			<TextField fx:id="txtFullName" promptText="Nhập họ tên"
+				styleClass="text-field" GridPane.rowIndex="0" GridPane.columnIndex="1" />
+
+			
+			<Label text="Giới tính:" GridPane.rowIndex="2"
+				GridPane.columnIndex="0" />
+			<ComboBox fx:id="cmbGender" styleClass="combo-box" GridPane.rowIndex="2"
+				GridPane.columnIndex="1" />
+
+			<Label text="Số điện thoại:" GridPane.rowIndex="3"
+				GridPane.columnIndex="0" />
+			<TextField fx:id="txtPhone" promptText="Nhập số điện thoại"
+				styleClass="text-field" GridPane.rowIndex="3" GridPane.columnIndex="1" />
+
+			<Label text="Số căn cước:" GridPane.rowIndex="4"
+				GridPane.columnIndex="0" />
+			<TextField fx:id="txtCitizenNumber"
+				promptText="Nhập số căn cước" styleClass="text-field" GridPane.rowIndex="4"
+				GridPane.columnIndex="1" />
+
+			<Label text="Địa chỉ:" GridPane.rowIndex="5"
+				GridPane.columnIndex="0" />
+			<TextField fx:id="txtAddress" promptText="Nhập địa chỉ"
+				styleClass="text-field" GridPane.rowIndex="5" GridPane.columnIndex="1" />
+
+			<Label text="Email:" GridPane.rowIndex="6"
+				GridPane.columnIndex="0" />
+			<TextField fx:id="txtEmail" promptText="Nhập email"
+				styleClass="text-field" GridPane.rowIndex="6" GridPane.columnIndex="1" />
+
+			<Label text="Vai trò:" GridPane.rowIndex="7"
+				GridPane.columnIndex="0" />
+			<ComboBox fx:id="cmbRole" promptText="Chọn vai trò"
+				styleClass="combo-box" GridPane.rowIndex="7" GridPane.columnIndex="1" />
+
+			<Label text="Ngày bắt đầu:" GridPane.rowIndex="8"
+				GridPane.columnIndex="0" />
+			<DatePicker fx:id="dpStartDate" GridPane.rowIndex="8"
+				GridPane.columnIndex="1" />
+
+			<Label text="Ngày kết thúc:" GridPane.rowIndex="9"
+				GridPane.columnIndex="0" />
+			<DatePicker fx:id="dpEndDate" GridPane.rowIndex="9"
+				GridPane.columnIndex="1" />
+
+			<Label text="Lương:" GridPane.rowIndex="10"
+				GridPane.columnIndex="0" />
+			<TextField fx:id="txtSalary" promptText="Nhập lương"
+				styleClass="text-field" GridPane.rowIndex="10" GridPane.columnIndex="1" />
+
+			<Label text="Ca làm việc:" GridPane.rowIndex="11"
+				GridPane.columnIndex="0" />
+			<ComboBox fx:id="cmbWorkShift" promptText="Chọn ca làm việc"
+				styleClass="combo-box" GridPane.rowIndex="11" GridPane.columnIndex="1" />
+
+			<Label text="Vị trí:" GridPane.rowIndex="12"
+				GridPane.columnIndex="0" />
+			<TextField fx:id="txtPosition" promptText="Nhập vị trí"
+				styleClass="text-field" GridPane.rowIndex="12" GridPane.columnIndex="1" />
+		</GridPane>
+
+		<!-- Các nút thao tác -->
+		<HBox spacing="10">
+			<Button text="Thêm Nhân Viên" onAction="#handleAddStaff" styleClass="button" />
+			<Button text="Sửa Nhân Viên" onAction="#handleEditStaff" styleClass="button" />
+			<Button text="Xóa Nhân Viên" onAction="#handleDeleteStaff" styleClass="button" />
+		</HBox>
+
+		<!-- Bảng hiển thị danh sách nhân viên -->
+		<TableView fx:id="staffTable" prefHeight="200" styleClass="table-view">
+			<columns>
+				<TableColumn fx:id="fullNameColumn" text="Họ tên"
+					prefWidth="100" />
+				<TableColumn fx:id="genderColumn" text="Giới tính"
+					prefWidth="100" />
+				<TableColumn fx:id="phoneColumn" text="Số điện thoại"
+					prefWidth="100" />
+				<TableColumn fx:id="emailColumn" text="Email"
+					prefWidth="100" />
+				<TableColumn fx:id="roleColumn" text="Vai trò"
+					prefWidth="100" />
+				<TableColumn fx:id="startDateColumn" text="Ngày bắt đầu"
+					prefWidth="100" />
+				<TableColumn fx:id="endDateColumn" text="Ngày kết thúc"
+					prefWidth="100" />
+				<TableColumn fx:id="salaryColumn" text="Lương"
+					prefWidth="100" />
+				<TableColumn fx:id="positionColumn" text="Vị trí"
+					prefWidth="100" />
+			</columns>
+		</TableView>
+
+	</VBox>
+</AnchorPane>

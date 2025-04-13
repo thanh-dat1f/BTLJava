@@ -1,0 +1,71 @@
+/* Cấu hình chung cho giao diện */
+.root {
+    -fx-background-color: #fff6dd;
+    -fx-font-family: "Poppins", sans-serif;
+}
+
+/* Menu Bar */
+.menu-bar {
+    -fx-background-color: #f39c12;
+    -fx-padding: 15px;
+}
+
+.welcome-label {
+    -fx-text-fill: #5d4037;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.logout-button {
+    -fx-background-color: white;
+    -fx-text-fill: #f39c12;
+    -fx-border-color: #f39c12;
+    -fx-border-width: 2px;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.logout-button:hover {
+    -fx-background-color: #f39c12;
+    -fx-text-fill: white;
+}
+
+/* Thông báo thông tin cửa hàng */
+.info-message {
+    -fx-text-fill: #5d4037;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-padding: 10 0;
+    -fx-alignment: center;
+}
+
+/* Nút Tiếp Tục - chung cho cả 3 nút */
+.continue-button {
+    -fx-font-size: 16px;
+    -fx-min-width: 200px;
+    -fx-padding: 10 20;
+    -fx-background-color: #f39c12;
+    -fx-text-fill: white;
+    -fx-background-radius: 10px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 4, 0, 0, 2);
+}
+
+/* Hover effect cho các nút Tiếp Tục */
+.continue-button:hover {
+    -fx-background-color: #e67e22;
+}
+
+/* Phần nội dung chính */
+.function-box {
+    -fx-padding: 30px;
+    -fx-alignment: center;
+}
+
+/* Logo */
+.function-box ImageView {
+    -fx-padding: 10px 0;
+}

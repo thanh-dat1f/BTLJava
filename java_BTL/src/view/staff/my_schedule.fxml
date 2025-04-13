@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox alignment="CENTER" spacing="20" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MyScheduleController">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+    
+    <!-- Tiêu đề -->
+    <Label text="Lịch làm việc" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+    
+    <!-- Danh sách lịch -->
+    <ListView fx:id="scheduleListView" prefHeight="300"/>
+    
+    <!-- Nút hành động -->
+    <HBox alignment="CENTER" spacing="10">
+        <Button fx:id="viewTodayBtn" text="Xem hôm nay" onAction="#handleViewToday"/>
+        <Button fx:id="viewWeekBtn" text="Xem tuần" onAction="#handleViewWeek"/>
+        <Button fx:id="printScheduleBtn" text="In lịch" onAction="#handlePrintSchedule"/>
+    </HBox>
+</VBox>

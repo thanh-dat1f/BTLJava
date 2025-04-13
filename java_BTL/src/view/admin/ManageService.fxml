@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Alert?>
+<?import javafx.scene.control.Alert.AlertType?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox xmlns:fx="http://javafx.com/fxml/1"
+	fx:controller="controllers.admin.ServiceController"
+	stylesheets="@/styles/service.css">
+	<!-- Tìm kiếm dịch vụ -->
+	<HBox spacing="10">
+		<TextField fx:id="searchTextField"
+			promptText="Nhập tên dịch vụ để tìm kiếm..." />
+		<Button text="Tìm kiếm" onAction="#handleSearch" />
+	</HBox>
+
+	<!-- Table hiển thị dịch vụ -->
+	<TableView fx:id="serviceTable" prefHeight="500"
+		prefWidth="500" visible="true" styleClass="table-view">
+		<columns>
+			<TableColumn fx:id="serviceIdColumn" text="Mã dịch vụ"
+				prefWidth="100" />
+			<TableColumn fx:id="serviceNameColumn" text="Tên dịch vụ"
+				prefWidth="300" />
+			<TableColumn fx:id="costPriceColumn"
+				text="Giá dịch vụ (VNĐ)" prefWidth="200" />
+			<TableColumn fx:id="typeServiceColumn"
+				text="Loại dịch vụ" prefWidth="150" />
+			<TableColumn fx:id="descriptionColumn" text="Mô tả"
+				prefWidth="700" />
+		</columns>
+	</TableView>
+
+	<!-- Thêm, sửa, xóa dịch vụ -->
+	<HBox spacing="10">
+		<Button text="Thêm dịch vụ" onAction="#handleAddService" />
+		<Button text="Sửa dịch vụ" onAction="#handleEditService" />
+		<Button text="Xóa dịch vụ" onAction="#handleDeleteService" />
+	</HBox>
+
+	<!-- Form nhập thông tin dịch vụ (ẩn ban đầu) -->
+	<VBox fx:id="formBox" spacing="10" visible="false" managed="false">
+		<TextField fx:id="serviceNameField" promptText="Tên dịch vụ" />
+		<TextField fx:id="costPriceField" promptText="Giá dịch vụ" />
+		<ComboBox fx:id="typeServiceComboBox"
+			promptText="Loại dịch vụ" />
+		<TextField fx:id="descriptionField"
+			promptText="Mô tả dịch vụ" />
+		<Button fx:id="saveButton" text="Lưu"
+			onAction="#handleSaveService" />
+	</VBox>
+
+</VBox>

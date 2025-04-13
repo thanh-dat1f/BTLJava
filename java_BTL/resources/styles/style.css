@@ -1,0 +1,102 @@
+
+/* Logo */
+.image-view {
+    -fx-alignment: center;
+}
+
+/* Tiêu đề */
+.title-label {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #6D4C41;
+    -fx-alignment: center;
+    -fx-padding: 10px;
+}
+
+
+/* Hiển thị thông báo lỗi */
+.error-label {
+    -fx-text-fill: red;
+    -fx-font-size: 12px;
+    -fx-alignment: center;
+}
+
+/* Định dạng background logo */
+.login-pane, .register-pane {
+    -fx-alignment: center;
+    -fx-padding: 20;
+    -fx-background-color: #FFF8E1;
+    -fx-background-radius: 10px;
+}
+
+/* Định dạng chung cho các button */
+.button {
+    -fx-background-color: #FF9800;
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 5px;
+    -fx-padding: 10px 20px;
+}
+
+/* Nút Ẩn/Hiện Mật khẩu */
+.move-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #6D4C41;
+    -fx-font-size: 14px;
+    -fx-font-weight: normal;
+    -fx-padding: 10 20;
+}
+
+.move-button:hover {
+    -fx-text-fill: #D2691E;
+    -fx-font-weight: bold;
+    -fx-underline: true;
+}
+
+/* Định dạng cho trường nhập mật khẩu */
+.input-field {
+    -fx-font-size: 14px;
+    -fx-background-radius: 5px;
+    -fx-padding: 10px;
+    -fx-background-color: #fff;
+    -fx-border-radius: 5px;
+    -fx-border-color: #FF9800;
+    -fx-border-width: 1px;
+    -fx-pref-width: 100%; /* Đảm bảo trường nhập chiếm toàn bộ chiều rộng */
+}
+
+/* Định dạng cho hình ảnh con mắt */
+.eye-icon {
+    -fx-cursor: hand;
+    -fx-translate-x: -15px; /* Đẩy icon về bên trái một chút để căn chỉnh */
+    -fx-translate-y: 0px;
+
+}
+
+/* style.css */
+.root {
+    -fx-font-family: "Arial";
+    -fx-font-size: 14pt;
+}
+
+.menu-bar {
+    -fx-background-color: #4CAF50;
+    -fx-text-fill: white;
+}
+
+.menu-item {
+    -fx-font-size: 14px;
+    -fx-padding: 8px;
+}
+
+.menu-item:hover {
+    -fx-background-color: #45a049;
+}
+
+.vbox {
+    -fx-padding: 20px;
+}
+
+
+

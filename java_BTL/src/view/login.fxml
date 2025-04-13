@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml" fx:controller="controllers.LoginController" stylesheets="@/styles/style.css">
+    <VBox alignment="CENTER" spacing="15" prefWidth="400" prefHeight="450" styleClass="login-pane" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
+        <ImageView fx:id="logoImage" fitHeight="100" fitWidth="100"/>
+
+        <Label text="Đăng Nhập" styleClass="title-label"/>
+
+        <TextField fx:id="usernameField" promptText="Tên đăng nhập" styleClass="input-field"/>
+
+        <StackPane alignment="CENTER_RIGHT">
+            <!-- PasswordField ban đầu -->
+            <PasswordField fx:id="passwordField" promptText="Mật khẩu" visible="true" styleClass="input-field"/>
+            <!-- TextField sẽ hiển thị mật khẩu khi ấn hiện mật khẩu -->
+            <TextField fx:id="passwordTextField" promptText="Mật khẩu" visible="false" styleClass="input-field"/>
+            <!-- Icon con mắt -->
+            <ImageView fx:id="togglePasswordVisibilityIcon" fitHeight="20" fitWidth="20" onMouseClicked="#togglePasswordVisibility" styleClass="eye-icon"/>
+        </StackPane>
+
+        <Label fx:id="messageLabel" styleClass="error-label"/>
+        
+        <Button text="Đăng nhập" onAction="#handleLogin" styleClass="login-button"/>
+    </VBox>
+</AnchorPane>
+
+
+

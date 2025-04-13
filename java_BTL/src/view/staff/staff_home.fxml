@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox alignment="CENTER" spacing="20" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.StaffHomeController">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+    
+    <!-- Tiêu đề lịch hôm nay -->
+    <Label fx:id="todayScheduleLabel" text="Lịch hôm nay" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+    
+    <!-- Danh sách thú cưng cần chăm sóc -->
+    <VBox spacing="10">
+        <Label text="Thú cưng cần chăm sóc"/>
+        <ListView fx:id="petCareListView" prefHeight="150"/>
+    </VBox>
+    
+    <!-- Danh sách booking hôm nay -->
+    <VBox spacing="10">
+        <Label text="Booking hôm nay"/>
+        <ListView fx:id="todayBookingListView" prefHeight="200"/>
+    </VBox>
+    
+    <!-- Các nút điều hướng -->
+    <HBox alignment="CENTER" spacing="10">
+        <Button fx:id="viewScheduleBtn" text="Xem lịch" onAction="#handleViewSchedule"/>
+        <Button fx:id="viewAssignedBookingsBtn" text="Booking được gán" onAction="#handleViewAssignedBookings"/>
+        <Button fx:id="editProfileBtn" text="Chỉnh sửa hồ sơ" onAction="#handleEditProfile"/>
+    </HBox>
+</VBox>

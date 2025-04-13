@@ -1,0 +1,132 @@
+.root {
+    -fx-background-color: #fff6dd;
+    -fx-font-family: "Poppins", sans-serif;
+}
+
+/* Menu Bar */
+.menu-bar {
+    -fx-background-color: #f39c12;
+    -fx-padding: 15px;
+}
+
+.welcome-label {
+    -fx-text-fill: #5d4037;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.logout-button {
+    -fx-background-color: white;
+    -fx-text-fill: #f39c12;
+    -fx-border-color: #f39c12;
+    -fx-border-width: 2px;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+.logout-button:hover {
+    -fx-background-color: #f39c12;
+    -fx-text-fill: white;
+}
+
+/* Nút chức năng */
+.function-box {
+    -fx-padding: 30px;
+}
+/* Định dạng chung cho các nút chức năng trong dashboard */
+.menu-button {
+    -fx-font-size: 14px;
+    -fx-min-width: 240px;
+    -fx-padding: 10 20;
+    -fx-background-color: #f39c12;
+    -fx-text-fill: white;
+    -fx-background-radius: 10px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 4, 0, 0, 2);
+}
+
+.menu-button:hover {
+    -fx-background-color: #e67e22;
+}
+
+/* Nút trong các màn hình con */
+.menu-button {
+    -fx-font-size: 14px;
+    -fx-min-width: 240px;
+    -fx-padding: 10 20;
+    -fx-background-color: #f39c12;
+    -fx-text-fill: white;
+    -fx-background-radius: 10px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 4, 0, 0, 2);
+}
+.image-view {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 10, 0.5, 0, 2);
+    -fx-border-radius: 50%;
+    -fx-background-radius: 50%;
+}
+.avatar {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0.1, 0, 2);
+    -fx-clip-shape: circle;
+    -fx-border-radius: 60;
+    -fx-background-radius: 60;
+}
+
+/* Tiêu đề Đặt lịch */
+.appointment-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #f39c12;
+}
+
+/* Section Title */
+.section-title {
+    -fx-font-weight: bold;
+    -fx-font-size: 16px;
+    -fx-text-fill: #5d4037;
+}
+
+/* ComboBox và DatePicker */
+.combo-box, .date-picker {
+    -fx-font-size: 14px;
+    -fx-min-width: 250px;
+    -fx-padding: 8;
+    -fx-background-color: #f0e6d6;
+    -fx-border-radius: 6;
+    -fx-border-color: #f39c12;
+    -fx-text-fill: #5d4037;
+}
+
+.combo-box:hover, .date-picker:hover {
+    -fx-background-color: #f9d078;
+}
+
+.combo-box .arrow, .date-picker .arrow {
+    -fx-background-color: #f39c12;
+}
+
+/* Thông tin khách hàng và đặt lịch */
+.info-label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #5d4037;
+}
+
+/* Nút hành động (Đặt lịch, Quay lại) */
+.action-button {
+    -fx-font-size: 14px;
+    -fx-min-width: 180px;
+    -fx-padding: 10 20;
+    -fx-background-color: #f39c12;
+    -fx-text-fill: white;
+    -fx-background-radius: 10px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 4, 0, 0, 2);
+}
+
+.action-button:hover {
+    -fx-background-color: #e67e22;
+}

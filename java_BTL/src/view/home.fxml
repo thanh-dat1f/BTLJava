@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml" fx:controller="controllers.HomeController" stylesheets="@/styles/home.css">
+    <AnchorPane AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
+        
+        <VBox alignment="CENTER" spacing="20" AnchorPane.topAnchor="-130" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.bottomAnchor="0">
+            <!-- Logo -->
+            <ImageView fitWidth="150" fitHeight="150" pickOnBounds="true" preserveRatio="true">
+                <image>
+                    <Image url="/images/logo.png" />
+                </image>
+            </ImageView>
+            
+            <!-- Tiêu đề -->
+            <Label fx:id="title" text="CHĂM SÓC THÚ CƯNG CỦA BẠN" styleClass="title-label"/>
+        </VBox>
+        
+        <!-- Nút chức năng -->
+        <HBox fx:id="buttonBar" spacing="0" alignment="CENTER_LEFT" AnchorPane.leftAnchor="20" AnchorPane.bottomAnchor="20" styleClass="button-bar">
+            <Button fx:id="btnLogin" text="Đăng nhập" styleClass="button-left"/>
+            <Button fx:id="btnLanguage" text="🇻🇳 | 🇺🇸" styleClass="button-right"/>
+        </HBox>
+    </AnchorPane>
+</AnchorPane>

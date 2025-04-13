@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="controllers.customer.CustomerDashboardController"
+            stylesheets="@/styles/customer_dashboard.css">
+
+    <!-- Thanh top menu -->
+  <top>
+<HBox fx:id="menuBar" spacing="10" alignment="CENTER_RIGHT" styleClass="menu-bar">
+    <padding>
+        <Insets top="0" right="20" bottom="0" left="0"/>
+    </padding>
+    <Label fx:id="lblWelcome" text="Chào mừng, [Tên người dùng]" styleClass="welcome-label"/>
+    <Button fx:id="btnLogout" text="Đăng xuất" styleClass="logout-button" onAction="#handleLogout"/>
+
+</HBox>
+
+</top>
+
+    <!-- Phần nội dung chính -->
+    <center>
+        <VBox fx:id="functionBox" spacing="15" alignment="CENTER" styleClass="function-box">
+
+            <ImageView fitWidth="150" fitHeight="150" pickOnBounds="true" preserveRatio="true">
+                <image>
+                    <Image url="/images/logo.png" />
+                </image>
+            </ImageView>
+
+            <!-- Các nút chức năng -->
+            <Button fx:id="btnProfile" text="Thông Tin Người Dùng" styleClass="menu-button"/>
+            <Button fx:id="btnBookAppointment" text="Đặt Lịch Hẹn" styleClass="menu-button"/>
+            <Button fx:id="btnServiceHistory" text="Lịch Sử Đăng Ký Dịch Vụ" styleClass="menu-button"/>
+            <Button fx:id="btnAppointmentHistory" text="Lịch Sử Cuộc Hẹn" styleClass="menu-button"/>
+            <Button fx:id="btnChangePassword" text="Đổi Mật Khẩu" styleClass="menu-button"/>
+
+        </VBox>
+    </center>
+</BorderPane>

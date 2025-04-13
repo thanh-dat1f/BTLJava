@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="controllers.DashboardController"
+            stylesheets="@/styles/dashboard.css">
+
+    <!-- Thanh top menu -->
+    <top>
+        <HBox fx:id="menuBar" spacing="10" alignment="CENTER_RIGHT" styleClass="menu-bar">
+            <padding>
+                <Insets top="0" right="20" bottom="0" left="0"/>
+            </padding>
+            <Label fx:id="lblWelcome" text="Chào mừng, [Tên người dùng]" styleClass="welcome-label"/>
+            <Button fx:id="btnLogout" text="Đăng xuất" styleClass="logout-button"/>
+        </HBox>
+    </top>
+
+    <!-- Phần nội dung chính -->
+    <center>
+        <VBox fx:id="functionBox" spacing="15" alignment="CENTER" styleClass="function-box">
+            <ImageView fitWidth="150" fitHeight="150" pickOnBounds="true" preserveRatio="true">
+                <image>
+                    <Image url="/images/logo.png" />
+                </image>
+            </ImageView>
+            <Label fx:id="lblMessage" text="BestPet - Cửa Hàng Chăm Sóc Thú Cưng số một thế giới ảo." styleClass="info-message"/>
+            <Button fx:id="btnAdminPanel" text="Tiếp tục" onAction="#handleAdminPanel" visible="false " styleClass="continue-button" /> 
+   			<Button fx:id="btnEmployeePanel" text="Tiếp tục" onAction="#handleEmployeePanel" visible="false" styleClass="continue-button" />
+        </VBox>
+    </center>
+</BorderPane>

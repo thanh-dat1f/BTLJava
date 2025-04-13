@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="resources"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="xtend-gen"/>
+	<classpathentry kind="lib" path="lib/barcodes-7.1.15.jar"/>
+	<classpathentry kind="lib" path="lib/font-asian-7.1.15.jar"/>
+	<classpathentry kind="lib" path="lib/forms-7.1.15.jar"/>
+	<classpathentry kind="lib" path="lib/hyph-7.1.15.jar"/>
+	<classpathentry kind="lib" path="lib/io-7.1.15.jar"/>
+	<classpathentry kind="lib" path="lib/itextpdf-5.5.13.3.jar"/>
+	<classpathentry kind="lib" path="lib/javax.activation-api-1.2.0.jar"/>
+	<classpathentry kind="lib" path="lib/javax.mail-api-1.6.2.jar"/>
+	<classpathentry kind="lib" path="lib/jbcrypt-0.4.jar"/>
+	<classpathentry kind="lib" path="lib/kernel-7.1.15.jar"/>
+	<classpathentry kind="lib" path="lib/layout-7.1.15.jar"/>
+	<classpathentry kind="lib" path="lib/mysql-connector-j-9.2.0.jar"/>
+	<classpathentry kind="lib" path="lib/pdfa-7.1.15.jar"/>
+	<classpathentry kind="lib" path="lib/pdftest-7.1.15.jar"/>
+	<classpathentry kind="lib" path="lib/sign-7.1.15.jar"/>
+	<classpathentry kind="lib" path="lib/slf4j-api-2.0.9.jar"/>
+	<classpathentry kind="lib" path="lib/slf4j-simple-2.0.9.jar"/>
+	<classpathentry kind="lib" path="lib/styled-xml-parser-7.1.15.jar"/>
+	<classpathentry kind="lib" path="lib/svg-7.1.15.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JavaFx"/>
+	<classpathentry kind="lib" path="C:/Users/Windows/jfoenix-9.0.10.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Windows/itextpdf-5.5.13.3.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

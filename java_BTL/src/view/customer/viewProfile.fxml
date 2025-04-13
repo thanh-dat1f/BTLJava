@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="controllers.customer.ViewProfileController"
+            stylesheets="@/styles/customer_dashboard.css">
+
+    <!-- Menu bar -->
+    <top>
+        <HBox spacing="10" alignment="CENTER_RIGHT" styleClass="menu-bar">
+            <padding><Insets top="0" right="20" bottom="0" left="0"/></padding>
+            <Label fx:id="lblWelcome" text="Chào mừng, [Tên người dùng]" styleClass="welcome-label"/>
+            <Button fx:id="btnLogout" text="Đăng xuất" styleClass="logout-button" onAction="#handleLogout"/>
+        </HBox>
+    </top>
+
+    <!-- Nội dung hiển thị thông tin -->
+    <center>
+        <VBox alignment="TOP_CENTER" spacing="20" maxWidth="400">
+            <padding><Insets top="40" right="20" bottom="40" left="20"/></padding>
+
+            <!-- Avatar -->
+            <ImageView fx:id="imgAvatar" fitWidth="120" fitHeight="120" preserveRatio="true"
+                       styleClass="avatar"/>
+
+            <!-- Thông tin cá nhân -->
+            <GridPane hgap="10" vgap="15">
+                <!-- Họ tên -->
+                <Label text="Họ tên:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                <Label fx:id="lblName" style="-fx-font-weight: bold;" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                <!-- Email -->
+                <Label text="Email:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                <Label fx:id="lblEmail" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                <!-- Mật khẩu -->
+                <Label text="Mật khẩu:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                <Label fx:id="lblPassword" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+            </GridPane>
+
+            <!-- Nút quay lại -->
+            <Button text="⬅ Quay lại" onAction="#handleBack" styleClass="menu-button"/>
+        </VBox>
+    </center>
+</BorderPane>

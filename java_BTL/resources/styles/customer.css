@@ -1,0 +1,22 @@
+/* customer.css */
+.button {
+    -fx-background-color: #FFB84D;
+    -fx-text-fill: white;
+}
+
+.text-field {
+    -fx-background-color: #F5F5F5;
+}
+
+.button:hover {
+    -fx-background-color: #FF9A3D;
+}
+
+.table-view {
+    -fx-background-color: #FFF8E1;
+}
+
+.list-view {
+    -fx-background-color: #FFF8E1;
+    -fx-pref-height: 200px;
+}

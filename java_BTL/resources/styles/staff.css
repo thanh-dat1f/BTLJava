@@ -1,0 +1,284 @@
+/* Tông màu cho giao diện */
+HBox {
+    -fx-background-color: #d88e3f;  /* Màu nâu cam */
+    -fx-padding: 10px;
+}
+
+/* Các nút trong thanh menu */
+Button {
+    -fx-background-color: #f1d6a1;  /* Màu vàng nhẹ */
+    -fx-text-fill: #5a3d2a;  /* Màu nâu đậm */
+    -fx-font-size: 14px;
+    -fx-padding: 10px 20px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-border-color: #d88e3f;
+    -fx-border-width: 1px;
+    -fx-cursor: hand;
+}
+
+/* Hiệu ứng hover cho nút */
+Button:hover {
+    -fx-background-color: #e09c4d;  /* Nâu cam sáng */
+    -fx-text-fill: white;
+}
+
+/* Phần quản lý tài khoản của admin */
+.right {
+    -fx-background-color: #d88e3f;  /* Nền màu nâu cam */
+    -fx-padding: 10px;
+}
+
+/* Khi di chuột qua các nút quản lý tài khoản */
+Button#btnManageAccount:hover {
+    -fx-background-color: #c67b33;
+    -fx-text-fill: white;
+}
+
+/* Phần nội dung chính */
+.center {
+    -fx-background-color: #f9f3e6; /* Màu nền nhạt cho phần nội dung */
+    -fx-padding: 20px;
+}
+/* Base styles */
+.root {
+    -fx-font-family: 'Segoe UI', Arial, sans-serif;
+    -fx-font-size: 14px;
+    -fx-background-color: #f5f5f5;
+}
+
+/* Login screen */
+.login-container {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+    -fx-padding: 30px;
+    -fx-spacing: 15px;
+    -fx-alignment: center;
+    -fx-max-width: 400px;
+    -fx-max-height: 400px;
+}
+
+/* Dashboard */
+.dashboard-root {
+    -fx-background-color: #f9f9f9;
+}
+
+.dashboard-header {
+    -fx-background-color: #2c3e50;
+    -fx-text-fill: white;
+}
+
+/* Buttons */
+.button {
+    -fx-padding: 8px 16px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-cursor: hand;
+    -fx-font-size: 14px; /* Đảm bảo kích thước chữ đồng đều */
+    -fx-min-width: 120px; /* Đặt chiều rộng tối thiểu */
+    -fx-alignment: center; /* Căn giữa nội dung */
+}
+
+.primary-button {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+}
+
+.primary-button:hover {
+    -fx-background-color: #2980b9;
+}
+
+.secondary-button {
+    -fx-background-color: #95a5a6;
+    -fx-text-fill: white;
+}
+
+.login-button {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+}
+
+.login-button:hover {
+    -fx-background-color: #2980b9;
+}
+
+.register-button {
+    -fx-background-color: #2ecc71;
+    -fx-text-fill: white;
+}
+
+.register-button:hover {
+    -fx-background-color: #27ae60;
+}
+
+.payment-button {
+    -fx-background-color: #e74c3c;
+    -fx-text-fill: white;
+}
+
+.payment-button:hover {
+    -fx-background-color: #c0392b;
+}
+
+.print-button {
+    -fx-background-color: #f1c40f;
+    -fx-text-fill: white;
+}
+
+.print-button:hover {
+    -fx-background-color: #d4ac0d;
+}
+
+.cancel-button {
+    -fx-background-color: #95a5a6;
+    -fx-text-fill: white;
+}
+
+.cancel-button:hover {
+    -fx-background-color: #7f8c8d;
+}
+
+.logout-button {
+    -fx-background-color: #e74c3c;
+    -fx-text-fill: white;
+}
+
+.logout-button:hover {
+    -fx-background-color: #c0392b;
+}
+
+/* Text Fields */
+.text-field {
+    -fx-padding: 8px;
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+}
+
+.password-field {
+    -fx-padding: 8px;
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+}
+
+/* Text Area */
+.text-area {
+    -fx-font-family: 'Courier New', monospace;
+    -fx-font-size: 12px;
+}
+
+/* ComboBox */
+.combo-box {
+    -fx-padding: 8px;
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+}
+
+/* RadioButton */
+.radio-button {
+    -fx-padding: 5px;
+}
+
+/* Labels */
+.title-label {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+}
+
+.message-label {
+    -fx-font-size: 12px;
+}
+
+.message-error {
+    -fx-text-fill: #e74c3c;
+}
+
+.message-success {
+    -fx-text-fill: #2ecc71;
+}
+
+/* Dialogs */
+.dialog-container {
+    -fx-background-color: white;
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+}
+
+.dialog-field {
+    -fx-padding: 8px;
+    -fx-min-width: 250px;
+}
+
+/* Tables */
+.table-view {
+    -fx-background-color: white;
+}
+
+.table-view .column-header {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+}
+/* Appointment Dashboard */
+.date-picker {
+    -fx-padding: 8px;
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+}
+
+/* Table styles */
+.table-view {
+    -fx-background-color: white;
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 1px;
+}
+
+.table-view .column-header {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.table-view .table-cell {
+    -fx-padding: 8px;
+    -fx-alignment: CENTER;
+}
+
+.table-row-cell:odd {
+    -fx-background-color: #f9f9f9;
+}
+
+.table-row-cell:selected {
+    -fx-background-color: #b3e0ff;
+}
+
+/* Button in table cell */
+.table-cell .button {
+    -fx-padding: 4px 8px;
+    -fx-font-size: 12px;
+    -fx-min-width: 60px;
+}
+.date-picker {
+    -fx-padding: 8px;
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+}
+
+.text-area {
+    -fx-font-family: 'Arial';
+    -fx-font-size: 14px;
+}
+
+

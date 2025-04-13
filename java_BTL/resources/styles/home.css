@@ -1,0 +1,48 @@
+.root {
+    -fx-background-color: linear-gradient(to bottom, #FFB86F, #FFA500, #FF8C00);
+}
+
+.title-label {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #FFFFFF;
+    -fx-alignment: center; 
+	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.7), 8, 0, 0, 3); 
+     -fx-padding: 0 40px;
+}
+
+/* Thanh bar chứa các nút */
+.button-bar {
+    -fx-background-color: #FFFFFF; 
+    -fx-background-radius: 25px;  
+    -fx-border-radius: 25px;  
+    -fx-border-color: #D2691E;  
+    -fx-border-width: 2px;
+    -fx-padding: 10px;
+}
+
+/* Các nút trong thanh bar */
+.button-left, .button-middle, .button-right {
+    -fx-background-color: transparent;
+    -fx-text-fill: #6D4C41;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 5px 10px;
+}
+
+/* Bo góc từng nút */
+.button-left {
+    -fx-background-radius: 25px 0 0 25px;
+}
+.button-middle {
+    -fx-background-radius: 0;
+}
+.button-right {
+    -fx-background-radius: 0 25px 25px 0;
+}
+
+/* Hiệu ứng khi di chuột vào */
+.button-left:hover, .button-middle:hover, .button-right:hover {
+    -fx-background-color: rgba(255, 165, 0, 0.2); /* Màu cam nhạt khi hover */
+    -fx-font-weight: bold;
+}
