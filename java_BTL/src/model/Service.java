@@ -1,8 +1,7 @@
 package model;
 
-
 public class Service {
-	private int serviceId;
+    private int serviceId;
     private String name;
     private String description;
     private double price;
@@ -13,68 +12,73 @@ public class Service {
         super();
     }
 
-	public Service(int serviceId, String name, String description, double price, int durationMinutes, boolean active) {
-		super();
-		this.serviceId = serviceId;
-		this.name = name;
-		this.description = description;
-		this.price = price;
-		this.durationMinutes = durationMinutes;
-		this.active = active;
-	}
+    public Service(int serviceId, String name, double price, String description) {
+        this.serviceId = serviceId;
+        this.name = name;
+        this.price = price;
+        this.description = description;
+    }
 
-	public int getServiceId() {
-		return serviceId;
-	}
+    public Service(int serviceId, String name, String description, double price, int durationMinutes, boolean active) {
+        this.serviceId = serviceId;
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.durationMinutes = durationMinutes;
+        this.active = active;
+    }
 
-	public void setServiceId(int serviceId) {
-		this.serviceId = serviceId;
-	}
+    public int getServiceId() {
+        return serviceId;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public void setServiceId(int serviceId) {
+        this.serviceId = serviceId;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public double getPrice() {
-		return price;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public void setPrice(double price) {
-		this.price = price;
-	}
+    public double getPrice() {
+        return price;
+    }
 
-	public int getDurationMinutes() {
-		return durationMinutes;
-	}
+    public void setPrice(double price) {
+        this.price = price;
+    }
 
-	public void setDurationMinutes(int durationMinutes) {
-		this.durationMinutes = durationMinutes;
-	}
+    public int getDurationMinutes() {
+        return durationMinutes;
+    }
 
-	public boolean isActive() {
-		return active;
-	}
+    public void setDurationMinutes(int durationMinutes) {
+        this.durationMinutes = durationMinutes;
+    }
 
-	public void setActive(boolean active) {
-		this.active = active;
-	}
+    public boolean isActive() {
+        return active;
+    }
 
-	@Override
-	public String toString() {
-		return "Service [serviceId=" + serviceId + ", name=" + name + ", description=" + description + ", price="
-				+ price + ", durationMinutes=" + durationMinutes + ", active=" + active + "]";
-	}
+    public void setActive(boolean active) {
+        this.active = active;
+    }
 
+    @Override
+    public String toString() {
+        return "Service [serviceId=" + serviceId + ", name=" + name + ", description=" + description + ", price="
+                + price + ", durationMinutes=" + durationMinutes + ", active=" + active + "]";
+    }
 }

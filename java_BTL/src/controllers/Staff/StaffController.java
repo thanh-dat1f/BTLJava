@@ -19,9 +19,10 @@ import model.Account;
 import model.Staff;
 import service.StaffService;
 import controllers.SceneSwitcher;
-import utils.RoleChecker; // Create this utility class if it doesn't exist
-import service.AuthService; // Add this if missing
+import utils.RoleChecker;
+import service.AuthService;
 import utils.Session;
+
 public class StaffController implements Initializable {
 
     @FXML
@@ -197,13 +198,14 @@ public class StaffController implements Initializable {
     @FXML
     private void logout(ActionEvent event) {
         try {
-            // Clear session
+            // Xóa phiên đăng nhập
             Session.getInstance().clearSession();
             authService.logout();
             
-            // Switch to login scene
+            // Chuyển về màn hình đăng nhập
             Stage currentStage = (Stage) logoutButton.getScene().getWindow();
-            SceneSwitcher.switchToLoginScene(currentStage);
+            // Sửa lỗi: Thay thế phương thức switchToLoginScene bằng phương thức switchScene
+            SceneSwitcher.switchScene("login.fxml");
             
         } catch (Exception e) {
             showAlert(Alert.AlertType.ERROR, "Lỗi", "Không thể đăng xuất", e.getMessage());

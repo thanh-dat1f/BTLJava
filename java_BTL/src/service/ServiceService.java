@@ -3,6 +3,7 @@ package service;
 import model.Service;
 import repository.ServiceRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ServiceService {
@@ -13,78 +14,90 @@ public class ServiceService {
         this.serviceRepository = ServiceRepository.getInstance();
     }
 
-    // Thêm dịch vụ mới (kiểm tra trùng lặp và tính hợp lệ)
+    /**
+     * Thêm dịch vụ mới
+     * @param service Thông tin dịch vụ cần thêm
+     * @return true nếu thêm thành công, false nếu không
+     */
     public boolean addService(Service service) {
-        if (isServiceValid(service) && !isServiceExists(service.getName())) {
-            return serviceRepository.insert(service) > 0;
+        if (!isServiceValid(service)) {
+            return false;
         }
-        return false;
+        
+        // Kiểm tra dịch vụ trùng tên
+        List<Service> existingServices = searchServicesByName(service.getName());
+        if (!existingServices.isEmpty()) {
+            System.out.println("Dịch vụ với tên này đã tồn tại.");
+            return false;
+        }
+        
+        return serviceRepository.insert(service) > 0;
     }
 
-    // Cập nhật thông tin dịch vụ (kiểm tra dịch vụ có tồn tại không)
+    /**
+     * Cập nhật thông tin dịch vụ
+     * @param service Thông tin dịch vụ mới
+     * @return true nếu cập nhật thành công, false nếu không
+     */
     public boolean updateService(Service service) {
-        if (isServiceExistsById(service.getServiceId())) {
-            if (isServiceValid(service)) {
-                return serviceRepository.update(service) > 0;
-            }
+        if (!isServiceExistsById(service.getServiceId())) {
+            System.out.println("Không tìm thấy dịch vụ với ID: " + service.getServiceId());
+            return false;
         }
-        return false;
+        
+        if (!isServiceValid(service)) {
+            return false;
+        }
+        
+        return serviceRepository.update(service) > 0;
     }
 
-    // Xóa dịch vụ (kiểm tra dịch vụ có tồn tại không)
+    /**
+     * Xóa dịch vụ
+     * @param service Dịch vụ cần xóa
+     * @return true nếu xóa thành công, false nếu không
+     */
     public boolean deleteService(Service service) {
-        if (isServiceExistsById(service.getServiceId())) {
-            return serviceRepository.delete(service) > 0;
+        if (!isServiceExistsById(service.getServiceId())) {
+            System.out.println("Không tìm thấy dịch vụ với ID: " + service.getServiceId());
+            return false;
         }
-        return false;
+        
+        return serviceRepository.delete(service) > 0;
     }
 
-    // Lấy tất cả dịch vụ
+    /**
+     * Lấy tất cả dịch vụ
+     * @return Danh sách dịch vụ
+     */
     public List<Service> getAllServices() {
         return serviceRepository.selectAll();
     }
 
-    // Lấy dịch vụ theo ID
-    public Service getServiceById(int serviceID) {
-        return serviceRepository.selectById(serviceID);
+    /**
+     * Lấy dịch vụ theo ID
+     * @param serviceId ID dịch vụ cần lấy
+     * @return Dịch vụ nếu tìm thấy, null nếu không tìm thấy
+     */
+    public Service getServiceById(int serviceId) {
+        return serviceRepository.selectById(serviceId);
     }
 
-    // Lấy dịch vụ theo điều kiện (ví dụ: lọc theo tên dịch vụ, loại dịch vụ...)
-    public List<Service> getServicesByCondition(String condition, Object... params) {
-        return serviceRepository.selectByCondition(condition, params);
-    }
-
-    // Tìm kiếm dịch vụ theo tên
+    /**
+     * Tìm kiếm dịch vụ theo tên
+     * @param serviceName Tên dịch vụ cần tìm
+     * @return Danh sách dịch vụ tìm thấy
+     */
     public List<Service> searchServicesByName(String serviceName) {
-        String condition = "serviceName LIKE ?";
-        String searchPattern = "%" + serviceName + "%"; // Tìm kiếm theo mẫu tên
+        if (serviceName == null || serviceName.trim().isEmpty()) {
+            return new ArrayList<>();
+        }
+        
+        String condition = "name LIKE ?";
+        String searchPattern = "%" + serviceName + "%";
         return serviceRepository.selectByCondition(condition, searchPattern);
     }
 
-    // Kiểm tra tính hợp lệ của dịch vụ (tên dịch vụ không được rỗng, giá trị hợp lệ)
-    private boolean isServiceValid(Service service) {
-        if (service.getName() == null || service.getName().trim().isEmpty()) {
-            System.out.println("Tên dịch vụ không được rỗng.");
-            return false;
-        }
-        if (service.getPrice() <= 0) {
-            System.out.println("Giá dịch vụ phải lớn hơn 0.");
-            return false;
-        }
-        return true;
-    }
-
-    // Kiểm tra xem dịch vụ đã tồn tại hay chưa (theo tên)
-    private boolean isServiceExists(String serviceName) {
-        List<Service> services = serviceRepository.selectByCondition("serviceName = ?", serviceName);
-        return !services.isEmpty();
-    }
-
-    // Kiểm tra xem dịch vụ đã tồn tại theo ID hay chưa
-    private boolean isServiceExistsById(int serviceID) {
-        Service service = serviceRepository.selectById(serviceID);
-        return service != null;
-    }
     /**
      * Lấy tất cả dịch vụ đang còn hoạt động
      * @return Danh sách các dịch vụ đang hoạt động
@@ -93,5 +106,37 @@ public class ServiceService {
         String condition = "active = ?";
         return serviceRepository.selectByCondition(condition, true);
     }
-}
 
+    /**
+     * Kiểm tra tính hợp lệ của dịch vụ
+     * @param service Dịch vụ cần kiểm tra
+     * @return true nếu dịch vụ hợp lệ, false nếu không
+     */
+    private boolean isServiceValid(Service service) {
+        if (service == null) {
+            System.out.println("Dịch vụ không được phép null");
+            return false;
+        }
+        
+        if (service.getName() == null || service.getName().trim().isEmpty()) {
+            System.out.println("Tên dịch vụ không được để trống");
+            return false;
+        }
+        
+        if (service.getPrice() <= 0) {
+            System.out.println("Giá dịch vụ phải lớn hơn 0");
+            return false;
+        }
+        
+        return true;
+    }
+
+    /**
+     * Kiểm tra dịch vụ có tồn tại không (dựa trên ID)
+     * @param serviceId ID dịch vụ cần kiểm tra
+     * @return true nếu dịch vụ tồn tại, false nếu không
+     */
+    private boolean isServiceExistsById(int serviceId) {
+        return serviceRepository.selectById(serviceId) != null;
+    }
+}

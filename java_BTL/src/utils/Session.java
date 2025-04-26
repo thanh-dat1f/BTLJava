@@ -1,6 +1,7 @@
 package utils;
 
 import model.Account;
+import model.Role;
 import model.Staff;
 import service.StaffService;
 
@@ -32,21 +33,34 @@ public class Session {
         }
     }
 
-    public static Account getCurrentAccount() {
-        return getInstance().currentAccount;
+    public Account getCurrentAccount() {
+        return currentAccount;
     }
 
-    public static Staff getCurrentStaff() {
-        return getInstance().currentStaff;
+    public Staff getCurrentStaff() {
+        return currentStaff;
     }
 
-    public static void clearSession() {
-        getInstance().currentAccount = null;
-        getInstance().currentStaff = null;
+    public void clearSession() {
+        currentAccount = null;
+        currentStaff = null;
     }
     
-    // Add the logout method as an alias for clearSession
+    // Static convenience methods
+    public static Account getCurrentUser() {
+        return getInstance().getCurrentAccount();
+    }
+    
+    public static Role getUserRole() {
+        Account account = getCurrentUser();
+        return account != null ? account.getRole() : null;
+    }
+    
+    public static void setCurrentUser(Account account) {
+        getInstance().setCurrentAccount(account);
+    }
+    
     public static void logout() {
-        clearSession();
+        getInstance().clearSession();
     }
 }

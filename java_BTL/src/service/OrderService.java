@@ -2,6 +2,7 @@ package service;
 
 import model.Customer;
 
+
 //import model.HappenStatus;
 import model.Order;
 import model.Staff;
@@ -16,7 +17,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import enums.TypeOrder;
+
 
 public class OrderService {
 	private final OrderRepository orderRepository;

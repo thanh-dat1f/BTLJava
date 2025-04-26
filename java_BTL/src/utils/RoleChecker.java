@@ -1,5 +1,6 @@
 package utils;
 
+import model.Account;
 import model.Staff;
 import java.util.HashMap;
 import java.util.Map;
@@ -11,19 +12,24 @@ public class RoleChecker {
         // Khởi tạo quyền cho từng vai trò
         rolePermissions.put("ADMIN", new String[]{
             "VIEW_SCHEDULE", "VIEW_ALL_BOOKINGS", "CREATE_BOOKING", "VIEW_INVOICE",
-            "MANAGE_PAYMENT", "PRINT_RECEIPT", "APPLY_PROMOTION", "MARK_SERVICE_DONE"
+            "MANAGE_PAYMENT", "PRINT_RECEIPT", "APPLY_PROMOTION", "MARK_SERVICE_DONE",
+            "MANAGE_ACCOUNT", "ASSIGN_PERMISSION", "MANAGE_SCHEDULE", "ADD_EMPLOYEE",
+            "MANAGE_SERVICE", "VIEW_FINANCE", "VIEW_DASHBOARD", "UPDATE_PROFILE"
         });
 
         rolePermissions.put("STAFF_RECEPTION", new String[]{
-            "VIEW_SCHEDULE", "CREATE_BOOKING", "VIEW_INVOICE", "APPLY_PROMOTION"
+            "VIEW_SCHEDULE", "CREATE_BOOKING", "VIEW_INVOICE", "APPLY_PROMOTION",
+            "VIEW_CUSTOMER", "UPDATE_PROFILE"
         });
 
         rolePermissions.put("STAFF_CARE", new String[]{
-            "VIEW_SCHEDULE", "VIEW_BOOKING_ASSIGNED", "MARK_SERVICE_DONE"
+            "VIEW_SCHEDULE", "VIEW_BOOKING_ASSIGNED", "MARK_SERVICE_DONE",
+            "VIEW_CUSTOMER", "UPDATE_PROFILE"
         });
 
         rolePermissions.put("STAFF_CASHIER", new String[]{
-            "VIEW_SCHEDULE", "VIEW_INVOICE", "MANAGE_PAYMENT", "PRINT_RECEIPT"
+            "VIEW_SCHEDULE", "VIEW_INVOICE", "MANAGE_PAYMENT", "PRINT_RECEIPT",
+            "VIEW_CUSTOMER", "UPDATE_PROFILE"
         });
     }
 
@@ -33,18 +39,29 @@ public class RoleChecker {
      * @return true nếu người dùng có quyền, false nếu không
      */
     public static boolean hasPermission(String permission) {
-        // Lấy nhân viên hiện tại từ Session
-        Staff staff = Session.getCurrentStaff();
-        if (staff == null) return false;
-
-        // Lấy vai trò của nhân viên
-        String role = staff.getRole();
-        if (role == null) return false;
-
-        // Lấy danh sách quyền của vai trò
-        String[] permissions = rolePermissions.get(role);
-        if (permissions == null) return false;
-
+        // Kiểm tra nếu không có Session hoặc User
+        Account currentUser = Session.getCurrentUser();
+        if (currentUser == null || currentUser.getRole() == null) {
+            return false;
+        }
+        
+        // Lấy role name từ user
+        String roleName = currentUser.getRole().getRoleName();
+        if (roleName == null) {
+            return false;
+        }
+        
+        // Admin có tất cả các quyền
+        if ("ADMIN".equals(roleName)) {
+            return true;
+        }
+        
+        // Kiểm tra quyền dựa trên role
+        String[] permissions = rolePermissions.get(roleName);
+        if (permissions == null) {
+            return false;
+        }
+        
         // Kiểm tra xem quyền được yêu cầu có trong danh sách không
         for (String perm : permissions) {
             if (perm.equals(permission)) {

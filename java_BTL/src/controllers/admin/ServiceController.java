@@ -188,7 +188,8 @@ public class ServiceController {
 				showAlert(Alert.AlertType.ERROR, "Thất bại", "Không thể cập nhật dịch vụ.");
 			}
 		} else {
-			Service newService = new Service(0, name, cost description);
+			// Fix for the Service constructor
+			Service newService = new Service(0, name, description, cost, 0, true);
 			if (serviceService.addService(newService)) {
 				serviceList.add(newService);
 				serviceTable.getItems().setAll(serviceList);

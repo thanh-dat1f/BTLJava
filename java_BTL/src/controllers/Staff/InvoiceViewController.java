@@ -21,11 +21,12 @@ import javafx.stage.Stage;
 import model.Invoice;
 import service.InvoiceService;
 import utils.Session;
-import utils.RoleChecker; // Create this utility class if it doesn't exist
-import java.time.LocalDate;
-import controllers.SceneSwitcher; // Create this utility class if it doesn't exist
-
-
+import utils.RoleChecker;
+import controllers.SceneSwitcher;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import controllers.InvoiceDetailController;
 public class InvoiceViewController implements Initializable {
 
     @FXML
@@ -196,16 +197,35 @@ public class InvoiceViewController implements Initializable {
     /**
      * Xem chi tiết hóa đơn được chọn
      */
+    /**
+     * Xem chi tiết hóa đơn được chọn
+     */
     @FXML
     private void viewDetails(ActionEvent event) {
-        validateAndExecuteInvoiceAction(
-            () -> SceneSwitcher.switchToInvoiceDetailScene(
-                (Stage) viewDetailsButton.getScene().getWindow(), 
-                selectedInvoice.getInvoiceId()
-            ), 
-            "Vui lòng chọn một hóa đơn để xem chi tiết.", 
-            "Không thể mở chi tiết hóa đơn"
-        );
+        if (selectedInvoice == null) {
+            showAlert(Alert.AlertType.WARNING, "Cảnh báo", "Chưa chọn hóa đơn", 
+                    "Vui lòng chọn một hóa đơn để xem chi tiết.");
+            return;
+        }
+        
+        try {
+            // Tạo FXMLLoader để tải màn hình chi tiết hóa đơn
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/invoice/invoice_detail.fxml"));
+            Parent root = loader.load();
+            
+            // Lấy controller của màn hình chi tiết hóa đơn
+            InvoiceDetailController detailController = loader.getController();
+            // Gọi phương thức để thiết lập dữ liệu hóa đơn
+            detailController.setInvoice(selectedInvoice);
+            
+            // Tạo scene mới và hiển thị
+            Scene scene = new Scene(root);
+            Stage stage = (Stage) viewDetailsButton.getScene().getWindow();
+            stage.setScene(scene);
+            stage.show();
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Lỗi", "Không thể mở chi tiết hóa đơn", e.getMessage());
+        }
     }
     
     /**
@@ -239,15 +259,19 @@ public class InvoiceViewController implements Initializable {
      */
     @FXML
     private void sendEmail(ActionEvent event) {
-        validateAndExecuteInvoiceAction(
-            () -> {
-                invoiceService.sendInvoiceByEmail(selectedInvoice.getInvoiceId());
-                showAlert(Alert.AlertType.INFORMATION, "Thành công", "Đã gửi email", 
-                    "Hóa đơn #" + selectedInvoice.getInvoiceId() + " đã được gửi đến email khách hàng.");
-            }, 
-            "Vui lòng chọn một hóa đơn để gửi email.", 
-            "Không thể gửi email"
-        );
+        if (selectedInvoice == null) {
+            showAlert(Alert.AlertType.WARNING, "Cảnh báo", "Chưa chọn hóa đơn", 
+                    "Vui lòng chọn một hóa đơn để gửi email.");
+            return;
+        }
+        
+        try {
+            invoiceService.sendInvoiceByEmail(selectedInvoice.getInvoiceId());
+            showAlert(Alert.AlertType.INFORMATION, "Thành công", "Đã gửi email", 
+                "Hóa đơn #" + selectedInvoice.getInvoiceId() + " đã được gửi đến email khách hàng.");
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Lỗi", "Không thể gửi email", e.getMessage());
+        }
     }
     
     /**
@@ -282,50 +306,6 @@ public class InvoiceViewController implements Initializable {
     }
     
     /**
-     * Xác thực và thực thi hành động với hóa đơn
-     */
-    private void validateAndExecuteInvoiceAction(
-        Runnable action, 
-        String noSelectionMessage, 
-        String errorTitle
-    ) {
-        validateAndExecuteInvoiceAction(
-            action, 
-            noSelectionMessage, 
-            errorTitle, 
-            () -> false, 
-            null
-        );
-    }
-    
-    /**
-     * Xác thực và thực thi hành động với hóa đơn (có điều kiện)
-     */
-    private void validateAndExecuteInvoiceAction(
-        Runnable action, 
-        String noSelectionMessage, 
-        String errorTitle, 
-        Invoker<Boolean> additionalCondition, 
-        String additionalConditionMessage
-    ) {
-        if (selectedInvoice == null) {
-            showAlert(Alert.AlertType.WARNING, "Cảnh báo", "Chưa chọn hóa đơn", noSelectionMessage);
-            return;
-        }
-        
-        try {
-            if (additionalCondition != null && additionalCondition.invoke()) {
-                showAlert(Alert.AlertType.WARNING, "Cảnh báo", "Không thể thực hiện", additionalConditionMessage);
-                return;
-            }
-            
-            action.run();
-        } catch (Exception e) {
-            showAlert(Alert.AlertType.ERROR, "Lỗi", errorTitle, e.getMessage());
-        }
-    }
-    
-    /**
      * Hiển thị thông báo
      */
     private void showAlert(Alert.AlertType alertType, String title, String header, String content) {
@@ -355,13 +335,5 @@ public class InvoiceViewController implements Initializable {
                 setText(formatter.apply(item));
             }
         }
-    }
-    
-    /**
-     * Giao diện hỗ trợ cho việc thêm điều kiện động
-     */
-    @FunctionalInterface
-    private interface Invoker<T> {
-        T invoke();
     }
 }
