@@ -6,6 +6,7 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import model.Account;
+import model.Role;
 import service.AccountService;
 import utils.Session;
 
@@ -51,7 +52,7 @@ public class LoginController {
             if (failedLoginAttempts >= 5) {
                 messageLabel.setText("Tài khoản đã bị khóa tạm thời sau 5 lần sai mật khẩu!");
                 messageLabel.setStyle("-fx-text-fill: red;");
-                return; // Không cho đăng nhập nếu đã khóa tài khoản
+                return;
             }
 
             Optional<Account> user = accountService.login(username, password);
@@ -64,6 +65,8 @@ public class LoginController {
             }
             
             Account account = user.get();
+            Role role = account.getRole();
+            
             messageLabel.setText("Đăng nhập thành công!");
             messageLabel.setStyle("-fx-text-fill: green;");
             Session.setCurrentUser(account);
@@ -71,8 +74,25 @@ public class LoginController {
             // Đặt lại số lần thất bại khi đăng nhập thành công
             failedLoginAttempts = 0;
 
-            // Chuyển hướng đến dashboard
-            SceneSwitcher.switchScene("dashboard.fxml");
+            // Điều hướng theo vai trò
+            switch (role.getRoleName().toUpperCase()) {
+                case "ADMIN":
+                    SceneSwitcher.switchScene("admin/adminDashboard.fxml");
+                    break;
+                case "MANAGER":
+                case "STAFF_RECEPTION":
+                case "STAFF_CARE":
+                case "STAFF_CASHIER":
+                    SceneSwitcher.switchScene("dashboard.fxml"); // Trang dashboard chung cho nhân viên
+                    break;
+                case "CUSTOMER":
+                    SceneSwitcher.switchScene("customer/customerDashboard.fxml");
+                    break;
+                default:
+                    messageLabel.setText("Vai trò không xác định!");
+                    messageLabel.setStyle("-fx-text-fill: red;");
+                    break;
+            }
 
         } catch (BusinessException e) {
             failedLoginAttempts++;

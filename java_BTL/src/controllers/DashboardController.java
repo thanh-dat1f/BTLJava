@@ -47,14 +47,18 @@ public class DashboardController {
                 btnEmployeePanel.setVisible(false);
                 
                 if (role != null) {
-                    switch (role.getRoleID()) {
-                        case 1: // Admin
+                    switch (role.getRoleName().toUpperCase()) {
+                        case "ADMIN": 
                             btnAdminPanel.setVisible(true); // Hiển thị nút quản trị viên
                             break;
-                        case 2: // Nhân viên chăm sóc
-                        case 3: // Nhân viên thu ngân
-                        case 4: // Nhân viên lễ tân
-                            btnEmployeePanel.setVisible(true); // Hiển thị nút nhân viên
+                        case "STAFF_CASHIER":
+                            navigateToStaffView("invoice_view.fxml");
+                            break;
+                        case "STAFF_RECEPTION":
+                            navigateToStaffView("booking_view.fxml");
+                            break;
+                        case "STAFF_CARE":
+                            navigateToStaffView("my_schedule.fxml");
                             break;
                         default:
                             lblWelcome.setText("Vai trò không xác định, vui lòng đăng nhập lại!");
@@ -78,6 +82,19 @@ public class DashboardController {
     }
 
     /**
+     * Điều hướng đến view của nhân viên
+     * @param viewFile Tên file FXML của view nhân viên
+     */
+    private void navigateToStaffView(String viewFile) {
+        try {
+            SceneSwitcher.switchScene("staff/" + viewFile);
+        } catch (Exception e) {
+            System.err.println("Lỗi khi chuyển đến view nhân viên: " + viewFile);
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * Chuyển đến trang Admin
      */
     @FXML
@@ -90,7 +107,23 @@ public class DashboardController {
      */
     @FXML
     private void handleEmployeePanel() {
-        SceneSwitcher.switchScene("staff/Staff.fxml");
+        Account currentUser = Session.getCurrentUser();
+        if (currentUser != null && currentUser.getRole() != null) {
+            switch (currentUser.getRole().getRoleName().toUpperCase()) {
+                case "STAFF_CASHIER":
+                    SceneSwitcher.switchScene("staff/invoice_view.fxml");
+                    break;
+                case "STAFF_RECEPTION":
+                    SceneSwitcher.switchScene("staff/booking_view.fxml");
+                    break;
+                case "STAFF_CARE":
+                    SceneSwitcher.switchScene("staff/my_schedule.fxml");
+                    break;
+                default:
+                    System.out.println("Vai trò không xác định");
+                    break;
+            }
+        }
     }
 
     /**
