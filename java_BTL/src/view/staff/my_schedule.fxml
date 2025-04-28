@@ -7,77 +7,371 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.paint.Color?>
 
-<AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.Staff.MyScheduleController"
-			stylesheets="@/styles/staff.css">
-   <children>
-      <VBox spacing="10.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
-         <children>
-            <Label fx:id="dateLabel" text="Lịch làm việc" textFill="#d88e3f">
-               <font>
-                  <Font name="System Bold" size="18.0" />
-               </font>
+<BorderPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" 
+            fx:controller="controllers.Staff.MyScheduleController"
+            stylesheets="@/styles/staff.css">
+
+   <top>
+      <VBox spacing="5">
+         <padding>
+            <Insets top="10" right="15" bottom="5" left="15"/>
+         </padding>
+         
+         <HBox alignment="CENTER_LEFT" spacing="15">
+            <Label fx:id="dateLabel" text="Lịch làm việc" style="-fx-font-size: 22; -fx-font-weight: bold;">
+               <textFill>
+                  <Color red="0.847" green="0.557" blue="0.247" />
+               </textFill>
             </Label>
             
-            <HBox alignment="CENTER_LEFT" spacing="10.0">
-               <children>
-                  <Label text="Ngày:">
-                     <font>
-                        <Font name="System Bold" size="12.0" />
-                     </font>
-                  </Label>
-                  <DatePicker fx:id="datePicker" />
-                  <Button fx:id="todayButton" mnemonicParsing="false" onAction="#loadTodaySchedule" text="Hôm nay" />
-                  <Button fx:id="weekViewButton" mnemonicParsing="false" onAction="#loadWeekSchedule" text="Xem tuần" />
-                  <Button fx:id="printButton" mnemonicParsing="false" onAction="#printSchedule" text="In lịch" />
-               </children>
-            </HBox>
+            <Region HBox.hgrow="ALWAYS" />
             
-            <TableView fx:id="scheduleTable" prefHeight="400.0" VBox.vgrow="ALWAYS">
-              <columns>
-                <TableColumn fx:id="idColumn" prefWidth="75.0" text="Mã lịch" />
-                <TableColumn fx:id="dateColumn" prefWidth="120.0" text="Ngày" />
-                <TableColumn fx:id="shiftColumn" prefWidth="120.0" text="Ca làm việc" />
-                <TableColumn fx:id="noteColumn" prefWidth="430.0" text="Ghi chú" />
-              </columns>
-            </TableView>
-            
-            <GridPane hgap="10" vgap="5">
-               <Label text="Tổng ca làm việc:" GridPane.columnIndex="0" GridPane.rowIndex="0">
-                  <font>
-                     <Font name="System Bold" size="12.0" />
-                  </font>
-               </Label>
-               <Label fx:id="totalShiftsLabel" text="0" GridPane.columnIndex="1" GridPane.rowIndex="0" />
-               
-               <Label text="Thông tin bổ sung:" GridPane.columnIndex="0" GridPane.rowIndex="1" alignment="TOP_LEFT">
-                  <font>
-                     <Font name="System Bold" size="12.0" />
-                  </font>
-               </Label>
-               <TextArea fx:id="additionalInfoArea" prefHeight="60.0" wrapText="true" editable="false" 
-                         GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.columnSpan="3" />
-               
-               <padding>
-                  <Insets top="10.0" bottom="10.0" />
-               </padding>
-            </GridPane>
-            
-            <HBox alignment="CENTER_RIGHT" spacing="10.0">
-               <children>
-                  <Button mnemonicParsing="false" text="Yêu cầu nghỉ phép" />
-                  <Button mnemonicParsing="false" onAction="#loadTodaySchedule" text="Làm mới" />
-               </children>
-            </HBox>
-         </children>
-         <padding>
-            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-         </padding>
+            <Label fx:id="staffNameLabel" text="Nhân viên: Nguyễn Văn A" style="-fx-font-size: 14;" />
+            <Label fx:id="positionLabel" text="Vị trí: Nhân viên chăm sóc" style="-fx-font-size: 14;" />
+         </HBox>
+         
+         <Separator />
       </VBox>
-   </children>
-</AnchorPane>
+   </top>
+   
+   <center>
+      <TabPane tabClosingPolicy="UNAVAILABLE">
+         <tabs>
+            <Tab text="Lịch làm việc">
+               <content>
+                  <BorderPane>
+                     <top>
+                        <VBox spacing="10">
+                           <padding>
+                              <Insets top="10" right="15" bottom="10" left="15"/>
+                           </padding>
+                           
+                           <HBox spacing="15" alignment="CENTER_LEFT">
+                              <Label text="Chọn ngày:" style="-fx-font-weight: bold;" />
+                              <DatePicker fx:id="datePicker" />
+                              
+                              <Button fx:id="todayButton" text="Hôm nay" onAction="#loadTodaySchedule" 
+                                      style="-fx-background-color: #d88e3f; -fx-text-fill: white;" />
+                                      
+                              <Button fx:id="weekViewButton" text="Xem tuần" onAction="#loadWeekSchedule"
+                                      style="-fx-background-color: #2196F3; -fx-text-fill: white;" />
+                                      
+                              <Button fx:id="monthViewButton" text="Xem tháng" onAction="#loadMonthSchedule" />
+                              
+                              <Region HBox.hgrow="ALWAYS" />
+                              
+                              <ComboBox fx:id="shiftFilter" promptText="Lọc theo ca" prefWidth="150" />
+                              <Button text="Áp dụng" onAction="#applyFilter" />
+                              <Button fx:id="printButton" text="In lịch" onAction="#printSchedule" />
+                           </HBox>
+                        </VBox>
+                     </top>
+                     
+                     <center>
+                        <VBox>
+                           <padding>
+                              <Insets top="0" right="15" bottom="0" left="15"/>
+                           </padding>
+                           
+                           <StackPane VBox.vgrow="ALWAYS">
+                              <!-- Day view -->
+                              <VBox fx:id="dayView">
+                                 <TableView fx:id="scheduleTable" VBox.vgrow="ALWAYS">
+                                    <columns>
+                                       <TableColumn fx:id="idColumn" prefWidth="75" text="Mã lịch" />
+                                       <TableColumn fx:id="dateColumn" prefWidth="120" text="Ngày" />
+                                       <TableColumn fx:id="shiftColumn" prefWidth="120" text="Ca làm việc" />
+                                       <TableColumn fx:id="startTimeColumn" prefWidth="100" text="Giờ bắt đầu" />
+                                       <TableColumn fx:id="endTimeColumn" prefWidth="100" text="Giờ kết thúc" />
+                                       <TableColumn fx:id="locationColumn" prefWidth="150" text="Địa điểm" />
+                                       <TableColumn fx:id="taskColumn" prefWidth="200" text="Công việc" />
+                                       <TableColumn fx:id="noteColumn" prefWidth="250" text="Ghi chú" />
+                                    </columns>
+                                 </TableView>
+                              </VBox>
+                              
+                              <!-- Week view - This would be shown/hidden based on selection -->
+                              <VBox fx:id="weekView" visible="false" managed="false">
+                                 <GridPane alignment="CENTER" hgap="1" vgap="1" style="-fx-background-color: #e0e0e0;">
+                                    <!-- Header row with days of week -->
+                                    <Label text="Thứ 2" GridPane.columnIndex="0" GridPane.rowIndex="0" 
+                                           style="-fx-font-weight: bold; -fx-padding: 10; -fx-background-color: #f5f5f5; -fx-min-width: 100;" />
+                                    <Label text="Thứ 3" GridPane.columnIndex="1" GridPane.rowIndex="0" 
+                                           style="-fx-font-weight: bold; -fx-padding: 10; -fx-background-color: #f5f5f5; -fx-min-width: 100;" />
+                                    <Label text="Thứ 4" GridPane.columnIndex="2" GridPane.rowIndex="0" 
+                                           style="-fx-font-weight: bold; -fx-padding: 10; -fx-background-color: #f5f5f5; -fx-min-width: 100;" />
+                                    <Label text="Thứ 5" GridPane.columnIndex="3" GridPane.rowIndex="0" 
+                                           style="-fx-font-weight: bold; -fx-padding: 10; -fx-background-color: #f5f5f5; -fx-min-width: 100;" />
+                                    <Label text="Thứ 6" GridPane.columnIndex="4" GridPane.rowIndex="0" 
+                                           style="-fx-font-weight: bold; -fx-padding: 10; -fx-background-color: #f5f5f5; -fx-min-width: 100;" />
+                                    <Label text="Thứ 7" GridPane.columnIndex="5" GridPane.rowIndex="0" 
+                                           style="-fx-font-weight: bold; -fx-padding: 10; -fx-background-color: #f5f5f5; -fx-min-width: 100;" />
+                                    <Label text="Chủ Nhật" GridPane.columnIndex="6" GridPane.rowIndex="0" 
+                                           style="-fx-font-weight: bold; -fx-padding: 10; -fx-background-color: #f5f5f5; -fx-min-width: 100;" />
+                                    
+                                    <!-- Shift rows -->
+                                    <!-- Morning shift row -->
+                                    <Label text="Ca sáng" GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.columnSpan="7"
+                                           style="-fx-font-weight: bold; -fx-padding: 5 10; -fx-background-color: #d0e8f2;" />
+                                           
+                                    <!-- Morning shift cells for each day -->
+                                    <VBox fx:id="monMorning" GridPane.columnIndex="0" GridPane.rowIndex="2" style="-fx-background-color: white; -fx-min-height: 100;" />
+                                    <VBox fx:id="tueMorning" GridPane.columnIndex="1" GridPane.rowIndex="2" style="-fx-background-color: white; -fx-min-height: 100;" />
+                                    <VBox fx:id="wedMorning" GridPane.columnIndex="2" GridPane.rowIndex="2" style="-fx-background-color: white; -fx-min-height: 100;" />
+                                    <VBox fx:id="thuMorning" GridPane.columnIndex="3" GridPane.rowIndex="2" style="-fx-background-color: white; -fx-min-height: 100;" />
+                                    <VBox fx:id="friMorning" GridPane.columnIndex="4" GridPane.rowIndex="2" style="-fx-background-color: white; -fx-min-height: 100;" />
+                                    <VBox fx:id="satMorning" GridPane.columnIndex="5" GridPane.rowIndex="2" style="-fx-background-color: white; -fx-min-height: 100;" />
+                                    <VBox fx:id="sunMorning" GridPane.columnIndex="6" GridPane.rowIndex="2" style="-fx-background-color: white; -fx-min-height: 100;" />
+                                    
+                                    <!-- Afternoon shift row -->
+                                    <Label text="Ca chiều" GridPane.columnIndex="0" GridPane.rowIndex="3" GridPane.columnSpan="7"
+                                           style="-fx-font-weight: bold; -fx-padding: 5 10; -fx-background-color: #ffecc7;" />
+                                           
+                                    <!-- Afternoon shift cells for each day -->
+                                    <VBox fx:id="monAfternoon" GridPane.columnIndex="0" GridPane.rowIndex="4" style="-fx-background-color: white; -fx-min-height: 100;" />
+                                    <VBox fx:id="tueAfternoon" GridPane.columnIndex="1" GridPane.rowIndex="4" style="-fx-background-color: white; -fx-min-height: 100;" />
+                                    <VBox fx:id="wedAfternoon" GridPane.columnIndex="2" GridPane.rowIndex="4" style="-fx-background-color: white; -fx-min-height: 100;" />
+                                    <VBox fx:id="thuAfternoon" GridPane.columnIndex="3" GridPane.rowIndex="4" style="-fx-background-color: white; -fx-min-height: 100;" />
+                                    <VBox fx:id="friAfternoon" GridPane.columnIndex="4" GridPane.rowIndex="4" style="-fx-background-color: white; -fx-min-height: 100;" />
+                                    <VBox fx:id="satAfternoon" GridPane.columnIndex="5" GridPane.rowIndex="4" style="-fx-background-color: white; -fx-min-height: 100;" />
+                                    <VBox fx:id="sunAfternoon" GridPane.columnIndex="6" GridPane.rowIndex="4" style="-fx-background-color: white; -fx-min-height: 100;" />
+                                    
+                                    <!-- Evening shift row -->
+                                    <Label text="Ca tối" GridPane.columnIndex="0" GridPane.rowIndex="5" GridPane.columnSpan="7"
+                                           style="-fx-font-weight: bold; -fx-padding: 5 10; -fx-background-color: #e8d0f2;" />
+                                           
+                                    <!-- Evening shift cells for each day -->
+                                    <VBox fx:id="monEvening" GridPane.columnIndex="0" GridPane.rowIndex="6" style="-fx-background-color: white; -fx-min-height: 100;" />
+                                    <VBox fx:id="tueEvening" GridPane.columnIndex="1" GridPane.rowIndex="6" style="-fx-background-color: white; -fx-min-height: 100;" />
+                                    <VBox fx:id="wedEvening" GridPane.columnIndex="2" GridPane.rowIndex="6" style="-fx-background-color: white; -fx-min-height: 100;" />
+                                    <VBox fx:id="thuEvening" GridPane.columnIndex="3" GridPane.rowIndex="6" style="-fx-background-color: white; -fx-min-height: 100;" />
+                                    <VBox fx:id="friEvening" GridPane.columnIndex="4" GridPane.rowIndex="6" style="-fx-background-color: white; -fx-min-height: 100;" />
+                                    <VBox fx:id="satEvening" GridPane.columnIndex="5" GridPane.rowIndex="6" style="-fx-background-color: white; -fx-min-height: 100;" />
+                                    <VBox fx:id="sunEvening" GridPane.columnIndex="6" GridPane.rowIndex="6" style="-fx-background-color: white; -fx-min-height: 100;" />
+                                 </GridPane>
+                              </VBox>
+                           </StackPane>
+                        </VBox>
+                     </center>
+                     
+                     <bottom>
+                        <VBox spacing="10">
+                           <padding>
+                              <Insets top="10" right="15" bottom="15" left="15"/>
+                           </padding>
+                           
+                           <GridPane hgap="15" vgap="10">
+                              <columnConstraints>
+                                 <ColumnConstraints percentWidth="30" />
+                                 <ColumnConstraints percentWidth="70" />
+                              </columnConstraints>
+                              
+                              <Label text="Thông tin chi tiết:" GridPane.columnIndex="0" GridPane.rowIndex="0"
+                                     style="-fx-font-weight: bold;" />
+                                     
+                              <TextArea fx:id="additionalInfoArea" prefHeight="60" wrapText="true" 
+                                        GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                                        
+                              <Label text="Tổng ca làm việc:" GridPane.columnIndex="0" GridPane.rowIndex="1"
+                                     style="-fx-font-weight: bold;" />
+                                     
+                              <HBox spacing="15" GridPane.columnIndex="1" GridPane.rowIndex="1" alignment="CENTER_LEFT">
+                                 <Label fx:id="totalShiftsLabel" text="0" style="-fx-font-size: 14;" />
+                                 <Separator orientation="VERTICAL" />
+                                 <Label text="Ca sáng:" style="-fx-font-weight: bold;" />
+                                 <Label fx:id="morningShiftsLabel" text="0" />
+                                 <Separator orientation="VERTICAL" />
+                                 <Label text="Ca chiều:" style="-fx-font-weight: bold;" />
+                                 <Label fx:id="afternoonShiftsLabel" text="0" />
+                                 <Separator orientation="VERTICAL" />
+                                 <Label text="Ca tối:" style="-fx-font-weight: bold;" />
+                                 <Label fx:id="eveningShiftsLabel" text="0" />
+                              </HBox>
+                           </GridPane>
+                           
+                           <HBox spacing="10" alignment="CENTER_RIGHT">
+                              <Button text="Yêu cầu nghỉ phép" onAction="#requestLeave"
+                                      style="-fx-background-color: #2196F3; -fx-text-fill: white;" />
+                              <Button text="Đổi ca" onAction="#requestShiftChange" />
+                              <Button text="Làm mới" onAction="#refreshSchedule" />
+                           </HBox>
+                        </VBox>
+                     </bottom>
+                  </BorderPane>
+               </content>
+            </Tab>
+            
+            <Tab text="Đăng ký ca làm">
+               <content>
+                  <BorderPane>
+                     <top>
+                        <VBox spacing="10">
+                           <padding>
+                              <Insets top="15" right="15" bottom="15" left="15"/>
+                           </padding>
+                           
+                           <Label text="Đăng ký lịch làm việc" style="-fx-font-size: 16; -fx-font-weight: bold;" />
+                           <Separator />
+                        </VBox>
+                     </top>
+                     
+                     <center>
+                        <GridPane hgap="15" vgap="15" alignment="CENTER">
+                           <padding>
+                              <Insets top="20" right="100" bottom="20" left="100"/>
+                           </padding>
+                           
+                           <Label text="Ngày làm việc:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                           <DatePicker fx:id="registrationDatePicker" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                           
+                           <Label text="Ca làm việc:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                           <ComboBox fx:id="shiftSelector" prefWidth="200" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                           
+                           <Label text="Vị trí làm việc:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                           <ComboBox fx:id="locationSelector" prefWidth="200" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                           
+                           <Label text="Ghi chú:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                           <TextArea fx:id="registrationNotes" prefHeight="100" wrapText="true" 
+                                     GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                     
+                           <HBox spacing="10" alignment="CENTER" GridPane.columnIndex="0" 
+                                 GridPane.rowIndex="4" GridPane.columnSpan="2">
+                              <Button text="Đăng ký ca làm" onAction="#registerShift"
+                                      style="-fx-background-color: #4CAF50; -fx-text-fill: white;" />
+                              <Button text="Hủy" onAction="#cancelRegistration" />
+                           </HBox>
+                        </GridPane>
+                     </center>
+                     
+                     <bottom>
+                        <VBox style="-fx-background-color: #f5f5f5;">
+                           <padding>
+                              <Insets top="15" right="15" bottom="15" left="15"/>
+                           </padding>
+                           
+                           <Label text="Lưu ý: Đăng ký ca làm cần được quản lý xác nhận trước khi có hiệu lực." 
+                                  style="-fx-font-style: italic;" />
+                           <Label text="Hạn đăng ký: Trước 48 giờ so với ca làm việc." 
+                                  style="-fx-font-style: italic;" />
+                        </VBox>
+                     </bottom>
+                  </BorderPane>
+               </content>
+            </Tab>
+            
+            <Tab text="Thống kê giờ làm">
+               <content>
+                  <BorderPane>
+                     <top>
+                        <VBox spacing="10">
+                           <padding>
+                              <Insets top="15" right="15" bottom="15" left="15"/>
+                           </padding>
+                           
+                           <HBox spacing="15" alignment="CENTER_LEFT">
+                              <Label text="Thống kê tháng:" style="-fx-font-weight: bold;" />
+                              <ComboBox fx:id="statisticsMonthSelector" prefWidth="120" />
+                              
+                              <Label text="Năm:" style="-fx-font-weight: bold;" />
+                              <ComboBox fx:id="statisticsYearSelector" prefWidth="100" />
+                              
+                              <Button text="Xem thống kê" onAction="#viewWorkStatistics" />
+                              
+                              <Region HBox.hgrow="ALWAYS" />
+                              
+                              <Button text="Xuất báo cáo" onAction="#exportWorkReport" />
+                           </HBox>
+                           
+                           <Separator />
+                        </VBox>
+                     </top>
+                     
+                     <center>
+                        <VBox alignment="TOP_CENTER" spacing="20">
+                           <padding>
+                              <Insets top="20" right="25" bottom="20" left="25"/>
+                           </padding>
+                           
+                           <!-- Summary cards -->
+                           <HBox spacing="20">
+                              <VBox style="-fx-background-color: #e1f5fe; -fx-padding: 15; -fx-background-radius: 5;"
+                                    HBox.hgrow="ALWAYS" alignment="CENTER">
+                                 <Label text="Tổng giờ làm việc" style="-fx-font-weight: bold;" />
+                                 <Label fx:id="totalHoursLabel" text="160 giờ" style="-fx-font-size: 24; -fx-font-weight: bold;" />
+                              </VBox>
+                              
+                              <VBox style="-fx-background-color: #f9fbe7; -fx-padding: 15; -fx-background-radius: 5;"
+                                    HBox.hgrow="ALWAYS" alignment="CENTER">
+                                 <Label text="Tăng ca" style="-fx-font-weight: bold;" />
+                                 <Label fx:id="overtimeHoursLabel" text="12 giờ" style="-fx-font-size: 24; -fx-font-weight: bold;" />
+                              </VBox>
+                              
+                              <VBox style="-fx-background-color: #fff8e1; -fx-padding: 15; -fx-background-radius: 5;"
+                                    HBox.hgrow="ALWAYS" alignment="CENTER">
+                                 <Label text="Ngày công chuẩn" style="-fx-font-weight: bold;" />
+                                 <Label fx:id="standardWorkdaysLabel" text="22 ngày" style="-fx-font-size: 24; -fx-font-weight: bold;" />
+                              </VBox>
+                              
+                              <VBox style="-fx-background-color: #e8eaf6; -fx-padding: 15; -fx-background-radius: 5;"
+                                    HBox.hgrow="ALWAYS" alignment="CENTER">
+                                 <Label text="Ngày nghỉ phép" style="-fx-font-weight: bold;" />
+                                 <Label fx:id="leaveCountLabel" text="1 ngày" style="-fx-font-size: 24; -fx-font-weight: bold;" />
+                              </VBox>
+                           </HBox>
+                           
+                           <!-- Work distribution graph would be here -->
+                           <VBox style="-fx-background-color: #f5f5f5; -fx-padding: 15; -fx-background-radius: 5;">
+                              <Label text="Biểu đồ phân bố thời gian làm việc" style="-fx-font-weight: bold;" />
+                              <Region prefHeight="300" />
+                           </VBox>
+                           
+                           <!-- Monthly comparison table -->
+                           <TableView fx:id="monthlyStatsTable" prefHeight="200">
+                              <columns>
+                                 <TableColumn prefWidth="100" text="Tháng" />
+                                 <TableColumn prefWidth="150" text="Tổng giờ làm việc" />
+                                 <TableColumn prefWidth="120" text="Tăng ca" />
+                                 <TableColumn prefWidth="120" text="Ngày công" />
+                                 <TableColumn prefWidth="120" text="Ngày nghỉ" />
+                                 <TableColumn prefWidth="150" text="Hiệu suất" />
+                              </columns>
+                           </TableView>
+                        </VBox>
+                     </center>
+                  </BorderPane>
+               </content>
+            </Tab>
+         </tabs>
+      </TabPane>
+   </center>
+   
+   <bottom>
+      <HBox alignment="CENTER_RIGHT" spacing="10" style="-fx-background-color: #f0f0f0;">
+         <padding>
+            <Insets top="10" right="15" bottom="10" left="15"/>
+         </padding>
+         
+         <Label fx:id="statusLabel" text="Trạng thái: Đã tải lịch làm việc" />
+         <Region HBox.hgrow="ALWAYS" />
+         <Button text="Trợ giúp" onAction="#showHelp" />
+         <Button text="Thoát" onAction="#exitApplication" />
+      </HBox>
+   </bottom>
+   
+</BorderPane>
