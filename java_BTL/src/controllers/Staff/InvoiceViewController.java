@@ -6,11 +6,17 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
@@ -18,15 +24,13 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
+
 import model.Invoice;
 import service.InvoiceService;
 import utils.Session;
 import utils.RoleChecker;
-import controllers.SceneSwitcher;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import controllers.InvoiceDetailController;
+
 public class InvoiceViewController implements Initializable {
 
     @FXML
@@ -99,21 +103,69 @@ public class InvoiceViewController implements Initializable {
      * Khởi tạo các cột cho bảng
      */
     private void initializeTableColumns() {
-        idColumn.setCellValueFactory(new PropertyValueFactory<>("invoiceId"));
-        orderIdColumn.setCellValueFactory(new PropertyValueFactory<>("orderId"));
-        dateColumn.setCellValueFactory(new PropertyValueFactory<>("paymentDate"));
-        totalColumn.setCellValueFactory(new PropertyValueFactory<>("total"));
-        paymentMethodColumn.setCellValueFactory(new PropertyValueFactory<>("paymentMethod"));
-        statusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
+        // Cột ID hóa đơn
+        idColumn.setCellValueFactory(cellData -> 
+            new SimpleIntegerProperty(cellData.getValue().getInvoiceId()).asObject()
+        );
+        
+        // Cột ID đơn hàng
+        orderIdColumn.setCellValueFactory(cellData -> {
+            Invoice invoice = cellData.getValue();
+            return new SimpleIntegerProperty(
+                invoice.getOrder() != null ? invoice.getOrder().getOrderId() : 0
+            ).asObject();
+        });
+        
+        // Cột ngày
+        dateColumn.setCellValueFactory(cellData -> {
+            Invoice invoice = cellData.getValue();
+            // Chuyển đổi Timestamp sang LocalDateTime
+            return new SimpleObjectProperty<>(
+                invoice.getPaymentDate() != null 
+                    ? invoice.getPaymentDate().toLocalDateTime() 
+                    : null
+            );
+        });
+        
+        // Cột tổng tiền
+        totalColumn.setCellValueFactory(cellData -> 
+            new SimpleObjectProperty<>(
+                cellData.getValue().getTotal() != null 
+                    ? cellData.getValue().getTotal().doubleValue() 
+                    : 0.0
+            )
+        );
+        
+        // Cột phương thức thanh toán
+        paymentMethodColumn.setCellValueFactory(cellData -> 
+            new SimpleStringProperty(
+                cellData.getValue().getPaymentMethod() != null 
+                    ? cellData.getValue().getPaymentMethod().name() 
+                    : "N/A"
+            )
+        );
+        
+        // Cột trạng thái
+        statusColumn.setCellValueFactory(cellData -> 
+            new SimpleStringProperty(
+                cellData.getValue().getStatus() != null 
+                    ? cellData.getValue().getStatus().name() 
+                    : "N/A"
+            )
+        );
         
         // Format ngày giờ
         dateColumn.setCellFactory(column -> new FormattedTableCell<>(
-            item -> item.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"))
+            item -> item != null 
+                ? item.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")) 
+                : "N/A"
         ));
         
         // Format số tiền
         totalColumn.setCellFactory(column -> new FormattedTableCell<>(
-            item -> String.format("%,.0f VND", item)
+            item -> item != null 
+                ? String.format("%,.0f VND", item) 
+                : "0 VND"
         ));
     }
     
@@ -163,22 +215,6 @@ public class InvoiceViewController implements Initializable {
         }
     }
 
-    
-    /**
-     * Lấy danh sách hóa đơn
-     */
-    private List<Invoice> fetchInvoices() {
-        if (fromDatePicker.getValue() != null && toDatePicker.getValue() != null) {
-            return invoiceService.getInvoicesByDateRange(
-                fromDatePicker.getValue().atStartOfDay(), 
-                toDatePicker.getValue().plusDays(1).atStartOfDay()
-            );
-        } else {
-            // Mặc định lấy hóa đơn trong 30 ngày gần nhất
-            return invoiceService.getRecentInvoices(30);
-        }
-    }
-    
     /**
      * Xử lý khi chọn một hóa đơn trong bảng
      */
@@ -186,7 +222,8 @@ public class InvoiceViewController implements Initializable {
         selectedInvoice = invoice;
         
         boolean hasSelection = (invoice != null);
-        boolean isCompleted = hasSelection && "COMPLETED".equals(invoice.getStatus());
+        boolean isCompleted = hasSelection && 
+            (invoice.getStatus() != null && invoice.getStatus().name().equals("COMPLETED"));
         
         // Cập nhật trạng thái của các nút
         viewDetailsButton.setDisable(!hasSelection);
@@ -194,9 +231,6 @@ public class InvoiceViewController implements Initializable {
         sendEmailButton.setDisable(!hasSelection);
     }
     
-    /**
-     * Xem chi tiết hóa đơn được chọn
-     */
     /**
      * Xem chi tiết hóa đơn được chọn
      */
@@ -239,7 +273,8 @@ public class InvoiceViewController implements Initializable {
             return;
         }
         
-        if (!"COMPLETED".equals(selectedInvoice.getStatus().name())) {
+        if (selectedInvoice.getStatus() == null || 
+            !selectedInvoice.getStatus().name().equals("COMPLETED")) {
             showAlert(Alert.AlertType.WARNING, "Cảnh báo", "Không thể in", 
                     "Chỉ có thể in lại các hóa đơn đã hoàn thành.");
             return;

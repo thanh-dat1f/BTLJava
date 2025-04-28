@@ -189,9 +189,10 @@ public class BookingViewController implements Initializable {
     /**
      * Tải danh sách booking được gán cho nhân viên hiện tại
      */
+    @FXML
     private void loadBookings() {
         try {
-            Staff currentStaff = Session.getCurrentStaff();
+            Staff currentStaff = Session.getInstance().getCurrentStaff();
             List<Booking> bookings;
             
             if (currentStaff == null) {
