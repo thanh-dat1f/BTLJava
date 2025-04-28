@@ -147,6 +147,23 @@ public class BookingService {
     }
     
     /**
+     * Lấy danh sách booking theo nhân viên và khoảng thời gian
+     * @param staffId ID của nhân viên
+     * @param startDate Ngày bắt đầu
+     * @param endDate Ngày kết thúc
+     * @return Danh sách booking trong khoảng thời gian
+     */
+    public List<Booking> getBookingsByStaffAndDateRange(int staffId, LocalDate startDate, LocalDate endDate) {
+        try {
+            String condition = "staff_id = ? AND DATE(booking_time) BETWEEN ? AND ?";
+            return bookingRepository.selectByCondition(condition, staffId, startDate, endDate);
+        } catch (Exception e) {
+            System.err.println("Lỗi khi lấy booking theo nhân viên và khoảng thời gian: " + e.getMessage());
+            return new ArrayList<>();
+        }
+    }
+    
+    /**
      * Lấy danh sách booking theo trạng thái
      * @param status Trạng thái booking
      * @return Danh sách booking có trạng thái tương ứng
@@ -306,7 +323,7 @@ public class BookingService {
     }
     
     /**
-     * Cập nhật trạng thái booking
+     * Cập nhật trạng thái booking (String version)
      * @param bookingId ID của booking
      * @param status Trạng thái mới
      * @return true nếu cập nhật thành công, false nếu thất bại
@@ -326,6 +343,35 @@ public class BookingService {
             
             // Cập nhật trạng thái
             booking.setStatus(statusEnum);
+            return bookingRepository.update(booking) > 0;
+            
+        } catch (IllegalArgumentException e) {
+            System.err.println("Trạng thái không hợp lệ: " + e.getMessage());
+            return false;
+        } catch (Exception e) {
+            System.err.println("Lỗi khi cập nhật trạng thái booking: " + e.getMessage());
+            return false;
+        }
+    }
+    
+    /**
+     * Cập nhật trạng thái booking (StatusEnum version)
+     * @param bookingId ID của booking
+     * @param status Trạng thái mới
+     * @return true nếu cập nhật thành công, false nếu thất bại
+     */
+    public boolean updateBookingStatus(int bookingId, StatusEnum status) {
+        try {
+            Booking booking = bookingRepository.selectById(bookingId);
+            if (booking == null) {
+                throw new IllegalArgumentException("Booking không tồn tại");
+            }
+            
+            // Kiểm tra logic chuyển trạng thái
+            validateStatusChange(booking.getStatus(), status);
+            
+            // Cập nhật trạng thái
+            booking.setStatus(status);
             return bookingRepository.update(booking) > 0;
             
         } catch (IllegalArgumentException e) {

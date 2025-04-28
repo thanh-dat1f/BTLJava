@@ -6,3 +6,6 @@
 /MyScheduleController.class
 /PromotionApplyController.class
 /StaffController.class
+/MyScheduleController$MonthlyStats.class
+/InvoiceViewController$InvoiceItem.class
+/InvoiceViewController$RevenueReport.class
