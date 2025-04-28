@@ -18,17 +18,19 @@ public class RoleChecker {
         });
 
         rolePermissions.put("STAFF_RECEPTION", new String[]{
-            "VIEW_SCHEDULE", "CREATE_BOOKING", "VIEW_INVOICE", "APPLY_PROMOTION",
-            "VIEW_CUSTOMER", "UPDATE_PROFILE"
+            "CREATE_BOOKING", "MODIFY_BOOKING", "VIEW_CUSTOMER_INFO", "REGISTER_NEW_CUSTOMER",  
+            "REGISTER_NEW_PET", "CHECK_IN_CUSTOMER", "VIEW_SCHEDULE", "VIEW_INVOICE", 
+            "APPLY_PROMOTION", "VIEW_CUSTOMER", "UPDATE_PROFILE"
         });
 
         rolePermissions.put("STAFF_CARE", new String[]{
-            "VIEW_SCHEDULE", "VIEW_BOOKING_ASSIGNED", "MARK_SERVICE_DONE",
-            "VIEW_CUSTOMER", "UPDATE_PROFILE"
+            "VIEW_SCHEDULE", "VIEW_BOOKING_ASSIGNED", "MARK_SERVICE_DONE", "VIEW_PET_DETAILS",  
+            "ADD_PET_HEALTH_NOTE", "VIEW_CUSTOMER_PETS", "VIEW_CUSTOMER", "UPDATE_PROFILE"
         });
 
         rolePermissions.put("STAFF_CASHIER", new String[]{
-            "VIEW_SCHEDULE", "VIEW_INVOICE", "MANAGE_PAYMENT", "PRINT_RECEIPT",
+            "VIEW_SCHEDULE", "CREATE_INVOICE", "PROCESS_PAYMENT", "PRINT_RECEIPT",
+            "VIEW_DAILY_REVENUE", "APPLY_DISCOUNT", "VIEW_INVOICE", "MANAGE_PAYMENT", 
             "VIEW_CUSTOMER", "UPDATE_PROFILE"
         });
     }

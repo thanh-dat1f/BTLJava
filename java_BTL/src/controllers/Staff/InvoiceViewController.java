@@ -1,11 +1,14 @@
 package controllers.Staff;
 
 import java.net.URL;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import enums.PaymentMethodEnum;
+import enums.StatusEnum;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -19,13 +22,16 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
 import model.Invoice;
+import model.Order;
 import service.InvoiceService;
 import utils.Session;
 import utils.RoleChecker;
@@ -72,6 +78,15 @@ public class InvoiceViewController implements Initializable {
     @FXML
     private Button searchButton;
     
+    @FXML
+    private TextField searchField;
+    
+    @FXML
+    private ComboBox<String> statusFilter;
+    
+    @FXML
+    private ComboBox<String> paymentMethodFilter;
+    
     private final InvoiceService invoiceService;
     private ObservableList<Invoice> invoiceList;
     private Invoice selectedInvoice;
@@ -88,12 +103,18 @@ public class InvoiceViewController implements Initializable {
         // Thiết lập giá trị mặc định cho DatePicker
         setupDatePickers();
         
+        // Thiết lập các giá trị cho ComboBox
+        setupComboBoxes();
+        
         // Tải dữ liệu hóa đơn
         loadInvoices();
         
         // Xử lý sự kiện khi chọn một hóa đơn
         invoiceTable.getSelectionModel().selectedItemProperty().addListener(
             (observable, oldValue, newValue) -> handleInvoiceSelection(newValue));
+        
+        // Thiết lập hành động tìm kiếm cho TextField
+        setupSearchField();
         
         // Kiểm tra quyền và hiển thị/ẩn các nút tương ứng
         setupButtonVisibility();
@@ -179,6 +200,40 @@ public class InvoiceViewController implements Initializable {
     }
     
     /**
+     * Thiết lập các giá trị cho ComboBox
+     */
+    private void setupComboBoxes() {
+        // Status filter
+        ObservableList<String> statusList = FXCollections.observableArrayList();
+        statusList.add("Tất cả");
+        for (StatusEnum status : StatusEnum.values()) {
+            statusList.add(status.name());
+        }
+        statusFilter.setItems(statusList);
+        statusFilter.setValue("Tất cả");
+        
+        // Payment method filter
+        ObservableList<String> paymentMethodList = FXCollections.observableArrayList();
+        paymentMethodList.add("Tất cả");
+        for (PaymentMethodEnum method : PaymentMethodEnum.values()) {
+            paymentMethodList.add(method.name());
+        }
+        paymentMethodFilter.setItems(paymentMethodList);
+        paymentMethodFilter.setValue("Tất cả");
+        
+        // Add listeners for filter changes
+        statusFilter.setOnAction(event -> applyFilters());
+        paymentMethodFilter.setOnAction(event -> applyFilters());
+    }
+    
+    /**
+     * Thiết lập hành động tìm kiếm cho TextField
+     */
+    private void setupSearchField() {
+        searchField.setOnAction(event -> searchInvoices());
+    }
+    
+    /**
      * Thiết lập hiển thị/ẩn các nút dựa trên quyền của người dùng
      */
     private void setupButtonVisibility() {
@@ -210,9 +265,68 @@ public class InvoiceViewController implements Initializable {
             
             invoiceList = FXCollections.observableArrayList(invoices);
             invoiceTable.setItems(invoiceList);
+            
+            // Apply current filters
+            applyFilters();
         } catch (Exception e) {
             showAlert(Alert.AlertType.ERROR, "Lỗi", "Không thể tải danh sách hóa đơn", e.getMessage());
         }
+    }
+    
+    /**
+     * Áp dụng các bộ lọc cho danh sách hóa đơn
+     */
+    private void applyFilters() {
+        if (invoiceList == null) return;
+        
+        ObservableList<Invoice> filteredList = FXCollections.observableArrayList(invoiceList);
+        
+        // Áp dụng bộ lọc trạng thái
+        String selectedStatus = statusFilter.getValue();
+        if (selectedStatus != null && !selectedStatus.equals("Tất cả")) {
+            filteredList.removeIf(invoice -> 
+                invoice.getStatus() == null || 
+                !invoice.getStatus().name().equals(selectedStatus)
+            );
+        }
+        
+        // Áp dụng bộ lọc phương thức thanh toán
+        String selectedMethod = paymentMethodFilter.getValue();
+        if (selectedMethod != null && !selectedMethod.equals("Tất cả")) {
+            filteredList.removeIf(invoice -> 
+                invoice.getPaymentMethod() == null || 
+                !invoice.getPaymentMethod().name().equals(selectedMethod)
+            );
+        }
+        
+        // Áp dụng tìm kiếm văn bản nếu có
+        String searchText = searchField.getText();
+        if (searchText != null && !searchText.trim().isEmpty()) {
+            String lowerCaseSearch = searchText.toLowerCase();
+            filteredList.removeIf(invoice -> {
+                // Tìm theo ID hóa đơn
+                if (String.valueOf(invoice.getInvoiceId()).contains(lowerCaseSearch)) {
+                    return false;
+                }
+                
+                // Tìm theo ID đơn hàng
+                if (invoice.getOrder() != null && 
+                    String.valueOf(invoice.getOrder().getOrderId()).contains(lowerCaseSearch)) {
+                    return false;
+                }
+                
+                // Tìm theo tên khách hàng (nếu có thông tin khách hàng)
+                if (invoice.getOrder() != null && invoice.getOrder().getCustomer() != null && 
+                    invoice.getOrder().getCustomer().getFullName().toLowerCase().contains(lowerCaseSearch)) {
+                    return false;
+                }
+                
+                return true;
+            });
+        }
+        
+        // Cập nhật bảng với danh sách đã lọc
+        invoiceTable.setItems(filteredList);
     }
 
     /**
@@ -229,6 +343,14 @@ public class InvoiceViewController implements Initializable {
         viewDetailsButton.setDisable(!hasSelection);
         reprintButton.setDisable(!(hasSelection && isCompleted));
         sendEmailButton.setDisable(!hasSelection);
+    }
+    
+    /**
+     * Tìm kiếm hóa đơn theo văn bản đã nhập
+     */
+    @FXML
+    private void searchInvoices() {
+        applyFilters();
     }
     
     /**
@@ -310,26 +432,6 @@ public class InvoiceViewController implements Initializable {
     }
     
     /**
-     * Tìm kiếm hóa đơn theo khoảng thời gian
-     */
-    @FXML
-    private void searchInvoices(ActionEvent event) {
-        if (fromDatePicker.getValue() == null || toDatePicker.getValue() == null) {
-            showAlert(Alert.AlertType.WARNING, "Cảnh báo", "Thiếu thông tin", 
-                    "Vui lòng chọn đầy đủ ngày bắt đầu và kết thúc.");
-            return;
-        }
-        
-        if (fromDatePicker.getValue().isAfter(toDatePicker.getValue())) {
-            showAlert(Alert.AlertType.WARNING, "Cảnh báo", "Thời gian không hợp lệ", 
-                    "Ngày bắt đầu phải trước hoặc cùng ngày kết thúc.");
-            return;
-        }
-        
-        loadInvoices();
-    }
-    
-    /**
      * Reset lại bộ lọc và hiển thị tất cả hóa đơn gần đây
      */
     @FXML
@@ -337,6 +439,11 @@ public class InvoiceViewController implements Initializable {
         LocalDateTime now = LocalDateTime.now();
         fromDatePicker.setValue(now.toLocalDate().minusDays(30));
         toDatePicker.setValue(now.toLocalDate());
+        
+        searchField.clear();
+        statusFilter.setValue("Tất cả");
+        paymentMethodFilter.setValue("Tất cả");
+        
         loadInvoices();
     }
     

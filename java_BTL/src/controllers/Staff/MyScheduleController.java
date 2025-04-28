@@ -79,6 +79,23 @@ public class MyScheduleController implements Initializable {
         shiftColumn.setCellValueFactory(new PropertyValueFactory<>("shift"));
         noteColumn.setCellValueFactory(new PropertyValueFactory<>("note"));
         
+        // Format date column
+        dateColumn.setCellFactory(column -> {
+            return new javafx.scene.control.TableCell<Schedule, LocalDate>() {
+                private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                
+                @Override
+                protected void updateItem(LocalDate item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty || item == null) {
+                        setText(null);
+                    } else {
+                        setText(formatter.format(item));
+                    }
+                }
+            };
+        });
+        
         // Set default value for DatePicker
         datePicker.setValue(LocalDate.now());
         
@@ -90,6 +107,7 @@ public class MyScheduleController implements Initializable {
             loadScheduleByDate(newValue);
         });
     }
+    
     /**
      * Tải lịch làm việc của ngày hiện tại
      */
