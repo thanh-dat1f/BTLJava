@@ -35,8 +35,8 @@
                   <DatePicker fx:id="datePicker" />
                   <Button mnemonicParsing="false" onAction="#loadBookings" text="Tìm kiếm" />
                   <TextField fx:id="searchTextField" promptText="Tìm theo tên/SĐT" prefWidth="200.0" />
-                  <Button mnemonicParsing="false" onAction="#searchBooking" text="Tìm" />
-                  <Button mnemonicParsing="false" onAction="#addNewBooking" text="Đặt lịch mới" />
+                  <Button mnemonicParsing="false" onAction="#searchInvoices" text="Tìm" />
+                  <Button mnemonicParsing="false" onAction="#createNewInvoice" text="Đặt lịch mới" />
                </children>
                <VBox.margin>
                   <Insets bottom="5.0" />

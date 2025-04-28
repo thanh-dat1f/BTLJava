@@ -70,7 +70,7 @@
             
             <HBox alignment="CENTER_RIGHT" spacing="10.0">
                <children>
-                  <Button mnemonicParsing="false" onAction="#requestTimeOff" text="Yêu cầu nghỉ phép" />
+                  <Button mnemonicParsing="false" text="Yêu cầu nghỉ phép" />
                   <Button mnemonicParsing="false" onAction="#loadTodaySchedule" text="Làm mới" />
                </children>
             </HBox>
