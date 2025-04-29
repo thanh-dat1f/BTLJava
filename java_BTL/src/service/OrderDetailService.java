@@ -5,8 +5,6 @@ import java.util.List;
 import model.OrderDetail;
 import repository.OrderDetailRepository;
 
-//định tạo thêm nhưng mà hồi sau khoong biết làm gì với nó
-
 public class OrderDetailService {
 
 	private final OrderDetailRepository orderDetailRepository;

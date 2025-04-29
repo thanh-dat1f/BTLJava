@@ -22,6 +22,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.paint.Color?>
+<?import javafx.collections.FXCollections?>
 
 <BorderPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" 
             fx:controller="controllers.Staff.MyScheduleController"
@@ -66,19 +67,20 @@
                               <Label text="Chọn ngày:" style="-fx-font-weight: bold;" />
                               <DatePicker fx:id="datePicker" />
                               
-                              <Button fx:id="todayButton" text="Hôm nay" onAction="#loadTodaySchedule" 
-                                      style="-fx-background-color: #d88e3f; -fx-text-fill: white;" />
-                                      
-                              <Button fx:id="weekViewButton" text="Xem tuần" onAction="#loadWeekSchedule"
-                                      style="-fx-background-color: #2196F3; -fx-text-fill: white;" />
-                                      
-                              <Button fx:id="monthViewButton" text="Xem tháng" onAction="#loadMonthSchedule" />
+                              <ComboBox fx:id="viewModeSelector" prefWidth="150" promptText="Chọn chế độ xem">
+                                  <items>
+                                      <FXCollections fx:factory="observableArrayList">
+                                          <String fx:value="Hôm nay" />
+                                          <String fx:value="Tuần" />
+                                          <String fx:value="Tháng" />
+                                      </FXCollections>
+                                  </items>
+                              </ComboBox>
                               
                               <Region HBox.hgrow="ALWAYS" />
                               
                               <ComboBox fx:id="shiftFilter" promptText="Lọc theo ca" prefWidth="150" />
                               <Button text="Áp dụng" onAction="#applyFilter" />
-                              <Button fx:id="printButton" text="In lịch" onAction="#printSchedule" />
                            </HBox>
                         </VBox>
                      </top>
@@ -179,7 +181,7 @@
                            <GridPane hgap="15" vgap="10">
                               <columnConstraints>
                                  <ColumnConstraints percentWidth="30" />
-                                 <ColumnConstraints percentWidth="70" />
+                                 herramienta="ColumnConstraints percentWidth="70" />
                               </columnConstraints>
                               
                               <Label text="Thông tin chi tiết:" GridPane.columnIndex="0" GridPane.rowIndex="0"
@@ -238,7 +240,7 @@
                            </padding>
                            
                            <Label text="Ngày làm việc:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                           <DatePicker fx:id="registrationDatePicker" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                           <DatePicker fx:id="registrationDatePicker" GridPane.columnIndex="1" GridPane.rowIndex"0" />
                            
                            <Label text="Ca làm việc:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
                            <ComboBox fx:id="shiftSelector" prefWidth="200" GridPane.columnIndex="1" GridPane.rowIndex="1" />
@@ -295,6 +297,15 @@
                               
                               <Region HBox.hgrow="ALWAYS" />
                               
+                              <Label text="Loại xuất:" />
+                              <ComboBox fx:id="exportTypeSelector" prefWidth="150" promptText="Chọn loại xuất">
+                                  <items>
+                                      <FXCollections fx:factory="observableArrayList">
+                                          <String fx:value="Báo cáo thống kê" />
+                                          <String fx:value="Lịch làm việc" />
+                                      </FXCollections>
+                                  </items>
+                              </ComboBox>
                               <Button text="Xuất báo cáo" onAction="#exportWorkReport" />
                            </HBox>
                            
@@ -324,7 +335,7 @@
                               
                               <VBox style="-fx-background-color: #fff8e1; -fx-padding: 15; -fx-background-radius: 5;"
                                     HBox.hgrow="ALWAYS" alignment="CENTER">
-                                 <Label text="Ngày công chuẩn" style="-fx-font-weight: bold;" />
+                                 <Label text="Ngày công chuẩn" style "-fx-font-weight: bold;" />
                                  <Label fx:id="standardWorkdaysLabel" text="22 ngày" style="-fx-font-size: 24; -fx-font-weight: bold;" />
                               </VBox>
                               

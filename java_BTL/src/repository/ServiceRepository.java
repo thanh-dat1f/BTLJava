@@ -141,9 +141,36 @@ public class ServiceRepository implements IRepository<Service> {
         String description = rs.getString("description");
         double costPrice = rs.getDouble("price");
         int duration_minutes = rs.getInt("duration_minutes");
-        Boolean active = rs.getBoolean("avtive");
+        Boolean active = rs.getBoolean("active");
 
         return new Service(serviceID, serviceName, description, costPrice, duration_minutes, active);
     }
 
+    public List<Service> searchServices(String keyword) {
+        List<Service> services = new ArrayList<>();
+        String query = "SELECT * FROM service WHERE name LIKE ? OR description LIKE ?";
+
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+
+            statement.setString(1, "%" + keyword + "%");
+            statement.setString(2, "%" + keyword + "%");
+
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                int serviceId = resultSet.getInt("service_id");
+                String name = resultSet.getString("name");
+                String description = resultSet.getString("description");
+                double price = resultSet.getDouble("price");
+                int durationMinutes = resultSet.getInt("duration_minutes");
+                boolean active = resultSet.getBoolean("active");
+
+                Service service = new Service(serviceId, name, description, price, durationMinutes, active);
+                services.add(service);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return services;
+    }
 }

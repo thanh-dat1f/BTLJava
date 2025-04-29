@@ -78,7 +78,7 @@
                            
                            <HBox spacing="15" alignment="CENTER_LEFT">
                               <TextField fx:id="searchField" promptText="Nhập mã HĐ/tên KH/SĐT" prefWidth="250" />
-                              <Button text="Tìm" onAction="#searchInvoices" />
+                              <!-- Xóa nút Tìm thứ hai -->
                               
                               <Separator orientation="VERTICAL" />
                               
@@ -93,6 +93,7 @@
                               <Button text="Tạo hóa đơn mới" onAction="#createNewInvoice"
                                       style="-fx-background-color: #4CAF50; -fx-text-fill: white;" />
                            </HBox>
+                           <Label text="Lưu ý: Nhấn 'Xem chi tiết' để in lại hoặc gửi email hóa đơn" style="-fx-font-style: italic;" />
                         </VBox>
                      </top>
                      
@@ -160,12 +161,6 @@
                                    minWidth="120" style="-fx-background-color: #4CAF50; -fx-text-fill: white;" />
                                    
                            <Button fx:id="applyDiscountButton" disable="true" text="Áp dụng KM" onAction="#applyDiscount" 
-                                   minWidth="120" />
-                                   
-                           <Button fx:id="reprintButton" disable="true" text="In lại" onAction="#reprintInvoice" 
-                                   minWidth="120" />
-                                   
-                           <Button fx:id="sendEmailButton" disable="true" text="Gửi email" onAction="#sendEmail" 
                                    minWidth="120" />
                                    
                            <Button fx:id="refundButton" disable="true" text="Hoàn tiền" onAction="#processRefund" 
@@ -290,9 +285,6 @@
                               <HBox spacing="10" alignment="CENTER">
                                  <Button text="Thanh toán và in" onAction="#processPaymentAndPrint" 
                                          style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold;" />
-                                         
-                                 <Button text="Thanh toán" onAction="#processPayment" 
-                                         style="-fx-background-color: #2196F3; -fx-text-fill: white;" />
                                          
                                  <Button text="Hủy" onAction="#cancelInvoice" />
                               </HBox>

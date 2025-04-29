@@ -1,5 +1,7 @@
+
 package controllers.Staff;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
@@ -33,6 +35,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.Booking;
@@ -86,6 +89,7 @@ public class BookingViewController implements Initializable {
     @FXML private TableColumn<Booking, String> upcomingStaffColumn;
     @FXML private ComboBox<String> monthSelector;
     @FXML private ComboBox<String> yearSelector;
+    @FXML private ComboBox<String> exportTypeSelector;
     @FXML private Label totalBookingsLabel;
     @FXML private Label bookingTrendLabel;
     @FXML private Label completionRateLabel;
@@ -112,18 +116,13 @@ public class BookingViewController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // Khởi tạo ngày hiện tại và thông tin nhân viên
         currentDateLabel.setText("Ngày hiện tại: " + LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         Staff currentStaff = Session.getCurrentStaff();
         staffNameLabel.setText("Nhân viên: " + (currentStaff != null ? currentStaff.getFullName() : "N/A"));
 
-        // Khởi tạo bảng lịch hẹn hôm nay
         initializeBookingTable();
-
-        // Khởi tạo bảng lịch hẹn sắp tới
         initializeUpcomingBookingTable();
 
-        // Khởi tạo bộ lọc trạng thái
         ObservableList<String> statusOptions = FXCollections.observableArrayList(
                 "Tất cả", StatusEnum.PENDING.name(), StatusEnum.CONFIRMED.name(),
                 StatusEnum.COMPLETED.name(), StatusEnum.CANCELLED.name());
@@ -132,7 +131,6 @@ public class BookingViewController implements Initializable {
         upcomingStatusFilter.setItems(statusOptions);
         upcomingStatusFilter.setValue("Tất cả");
 
-        // Khởi tạo bộ chọn tháng và năm
         ObservableList<String> months = FXCollections.observableArrayList(
                 "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12");
         monthSelector.setItems(months);
@@ -142,23 +140,22 @@ public class BookingViewController implements Initializable {
         yearSelector.setItems(years);
         yearSelector.setValue(String.valueOf(LocalDate.now().getYear()));
 
-        // Thiết lập giá trị mặc định cho DatePicker
+        exportTypeSelector.getItems().addAll("Báo cáo thống kê", "Danh sách lịch đặt");
+        exportTypeSelector.setValue("Báo cáo thống kê");
+
         datePicker.setValue(LocalDate.now());
         startDatePicker.setValue(LocalDate.now());
         endDatePicker.setValue(LocalDate.now().plusDays(7));
 
-        // Tải dữ liệu ban đầu
         loadTodaySchedule();
         loadUpcomingBookings();
         loadStatistics();
 
-        // Thiết lập lắng nghe sự kiện chọn hàng
         bookingTable.getSelectionModel().selectedItemProperty().addListener(
                 (obs, old, newValue) -> handleBookingSelection(newValue));
         upcomingBookingTable.getSelectionModel().selectedItemProperty().addListener(
                 (obs, old, newValue) -> handleBookingSelection(newValue));
 
-        // Thiết lập hiển thị nút dựa trên vai trò
         setupButtonVisibility();
     }
 
@@ -311,7 +308,6 @@ public class BookingViewController implements Initializable {
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.showAndWait();
             
-            // Sau khi đóng cửa sổ đặt lịch, tải lại danh sách
             loadTodaySchedule();
         } catch (IOException e) {
             showAlert(Alert.AlertType.ERROR, "Lỗi", "Không thể mở màn hình đặt lịch mới", e.getMessage());
@@ -361,7 +357,6 @@ public class BookingViewController implements Initializable {
             return;
         }
         try {
-            // Khi bắt đầu dịch vụ, trạng thái vẫn là CONFIRMED nhưng cập nhật note
             selectedBooking.setNote("Đang thực hiện dịch vụ - " + LocalDateTime.now());
             boolean updated = bookingRepository.update(selectedBooking) > 0;
             if (updated) {
@@ -417,9 +412,7 @@ public class BookingViewController implements Initializable {
             return;
         }
         try {
-            // Lưu bookingId vào Session để trang hóa đơn có thể truy cập
             Session.getInstance().setAttribute("selectedBookingId", selectedBooking.getBookingId());
-            // Chuyển đến trang hóa đơn
             SceneSwitcher.switchScene("staff/invoice_view.fxml");
         } catch (Exception e) {
             showAlert(Alert.AlertType.ERROR, "Lỗi", "Không thể mở màn hình hóa đơn", e.getMessage());
@@ -438,10 +431,8 @@ public class BookingViewController implements Initializable {
             return;
         }
         
-        // Hiển thị ghi chú của booking
         notesArea.setText(booking.getNote() != null ? booking.getNote() : "Không có ghi chú");
         
-        // Kiểm tra trạng thái để bật/tắt các nút
         StatusEnum status = booking.getStatus();
         boolean isPending = status == StatusEnum.PENDING;
         boolean isConfirmed = status == StatusEnum.CONFIRMED;
@@ -503,101 +494,6 @@ public class BookingViewController implements Initializable {
     }
 
     @FXML
-    private void sendReminders(ActionEvent event) {
-        try {
-            ObservableList<Booking> selectedBookings = upcomingBookingTable.getSelectionModel().getSelectedItems();
-            if (selectedBookings.isEmpty()) {
-                showAlert(Alert.AlertType.WARNING, "Cảnh báo", "Chưa chọn lịch hẹn",
-                        "Vui lòng chọn ít nhất một lịch hẹn để gửi nhắc nhở.");
-                return;
-            }
-            
-            int successCount = 0;
-            for (Booking booking : selectedBookings) {
-                if (booking.getCustomer() != null && booking.getCustomer().getEmail() != null) {
-                    boolean emailSent = sendReminderEmail(booking);
-                    if (emailSent) {
-                        successCount++;
-                        // Ghi chú về việc đã gửi nhắc nhở
-                        booking.setNote((booking.getNote() != null ? booking.getNote() + "\n" : "") + 
-                                "Đã gửi nhắc nhở qua email vào " + LocalDateTime.now());
-                        bookingRepository.update(booking);
-                    }
-                }
-            }
-            
-            showAlert(Alert.AlertType.INFORMATION, "Thành công", "Đã gửi nhắc nhở",
-                    "Nhắc nhở đã được gửi cho " + successCount + " lịch hẹn.");
-            statusMessageLabel.setText("Đã gửi nhắc nhở cho " + successCount + " lịch hẹn");
-        } catch (Exception e) {
-            showAlert(Alert.AlertType.ERROR, "Lỗi", "Không thể gửi nhắc nhở", e.getMessage());
-        }
-    }
-    
-    private boolean sendReminderEmail(Booking booking) {
-        // Trong thực tế, bạn sẽ sử dụng một dịch vụ email để gửi email
-        // Đây chỉ là mã giả lập việc gửi email
-        try {
-            String customerEmail = booking.getCustomer().getEmail();
-            String customerName = booking.getCustomer().getFullName();
-            String bookingDate = booking.getBookingTime().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
-            String petName = booking.getPet() != null ? booking.getPet().getName() : "thú cưng của bạn";
-            String serviceName = getServiceNameFromBooking(booking);
-            
-            System.out.println("Gửi email nhắc nhở cho " + customerEmail);
-            System.out.println("Nội dung: Xin chào " + customerName + ", BestPets xin nhắc bạn về lịch hẹn của " + 
-                    petName + " vào lúc " + bookingDate + " cho dịch vụ " + serviceName);
-            
-            // Trong thực tế, bạn sẽ gọi một dịch vụ email ở đây
-            // EmailService.sendEmail(customerEmail, "Nhắc nhở lịch hẹn tại BestPets", emailContent);
-            
-            return true; // Giả định email đã được gửi thành công
-        } catch (Exception e) {
-            System.err.println("Lỗi khi gửi email: " + e.getMessage());
-            return false;
-        }
-    }
-
-    @FXML
-    private void exportBookingList(ActionEvent event) {
-        try {
-            if (upcomingBookingList == null || upcomingBookingList.isEmpty()) {
-                showAlert(Alert.AlertType.WARNING, "Cảnh báo", "Không có dữ liệu",
-                        "Không có lịch hẹn nào để xuất danh sách.");
-                return;
-            }
-            
-            // Xuất danh sách lịch hẹn sang file CSV
-            String fileName = "bookings_export_" + LocalDate.now().toString() + ".csv";
-            try (FileWriter writer = new FileWriter(fileName)) {
-                writer.write("Mã đặt lịch,Ngày,Giờ,Khách hàng,Số điện thoại,Thú cưng,Dịch vụ,Trạng thái,Nhân viên phụ trách\n");
-                for (Booking booking : upcomingBookingList) {
-                    String serviceName = getServiceNameFromBooking(booking);
-                    String line = String.format("%d,%s,%s,%s,%s,%s,%s,%s,%s\n",
-                            booking.getBookingId(),
-                            booking.getBookingTime().toLocalDate(),
-                            booking.getBookingTime().format(DateTimeFormatter.ofPattern("HH:mm")),
-                            booking.getCustomer() != null ? booking.getCustomer().getFullName() : "",
-                            booking.getCustomer() != null ? booking.getCustomer().getPhone() : "",
-                            booking.getPet() != null ? booking.getPet().getName() : "",
-                            serviceName,
-                            booking.getStatus() != null ? booking.getStatus().name() : "",
-                            booking.getStaff() != null ? booking.getStaff().getFullName() : "");
-                    writer.write(line);
-                }
-            }
-            showAlert(Alert.AlertType.INFORMATION, "Thành công", "Đã xuất danh sách",
-                    "Danh sách lịch hẹn đã được xuất sang " + fileName);
-            statusMessageLabel.setText("Đã xuất danh sách lịch hẹn sang " + fileName);
-        } catch (IOException e) {
-            showAlert(Alert.AlertType.ERROR, "Lỗi", "Không thể xuất danh sách",
-                    "Lỗi khi ghi file: " + e.getMessage());
-        } catch (Exception e) {
-            showAlert(Alert.AlertType.ERROR, "Lỗi", "Không thể xuất danh sách", e.getMessage());
-        }
-    }
-
-    @FXML
     private void viewStatistics(ActionEvent event) {
         loadStatistics();
     }
@@ -611,35 +507,25 @@ public class BookingViewController implements Initializable {
                 year = String.valueOf(LocalDate.now().getYear());
             }
             
-            // Lấy dữ liệu thống kê từ database thực
             LocalDate startDate = LocalDate.of(Integer.parseInt(year), Integer.parseInt(month), 1);
             LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
             
-            // Lấy tất cả booking trong tháng từ DB
             List<Booking> bookings = bookingService.getBookingsByDateRange(startDate, endDate);
             
-            // Tổng số lịch hẹn
             int totalBookings = bookings.size();
-            
-            // Tổng số booking hoàn thành
             long completedCount = bookings.stream()
                     .filter(b -> StatusEnum.COMPLETED.equals(b.getStatus()))
                     .count();
-            
-            // Tỉ lệ hoàn thành
             double completionRate = totalBookings > 0 ? (completedCount * 100.0 / totalBookings) : 0;
             
-            // Tính toán thống kê dịch vụ phổ biến nhất
             Map<String, Integer> serviceCount = new HashMap<>();
             for (Booking booking : bookings) {
                 String serviceName = getServiceNameFromBooking(booking);
                 serviceCount.put(serviceName, serviceCount.getOrDefault(serviceName, 0) + 1);
             }
             
-            // Tìm dịch vụ phổ biến nhất
             String popularService = "Không có dữ liệu";
             double servicePercent = 0;
-            
             if (!serviceCount.isEmpty()) {
                 Map.Entry<String, Integer> mostPopular = serviceCount.entrySet().stream()
                         .max(Map.Entry.comparingByValue())
@@ -652,7 +538,6 @@ public class BookingViewController implements Initializable {
                 }
             }
             
-            // Tính số khách hàng thân thiết (đặt ≥ 3 lần/tháng)
             Map<Integer, Long> customerBookingCount = bookings.stream()
                     .filter(b -> b.getCustomer() != null)
                     .collect(Collectors.groupingBy(
@@ -663,41 +548,33 @@ public class BookingViewController implements Initializable {
                     .filter(entry -> entry.getValue() >= 3)
                     .count();
             
-            // Lấy dữ liệu tháng trước
             LocalDate prevMonthStart = startDate.minusMonths(1);
             LocalDate prevMonthEnd = prevMonthStart.withDayOfMonth(prevMonthStart.lengthOfMonth());
             List<Booking> prevMonthBookings = bookingService.getBookingsByDateRange(prevMonthStart, prevMonthEnd);
             
-            // Tổng số booking tháng trước
             int prevTotalBookings = prevMonthBookings.size();
-            
-            // Tỉ lệ hoàn thành tháng trước
             long prevCompletedCount = prevMonthBookings.stream()
                     .filter(b -> StatusEnum.COMPLETED.equals(b.getStatus()))
                     .count();
             double prevCompletionRate = prevTotalBookings > 0 ? 
                     (prevCompletedCount * 100.0 / prevTotalBookings) : 0;
             
-            // Tính xu hướng so với tháng trước
             double bookingTrend = prevTotalBookings > 0 ? 
                     ((totalBookings - prevTotalBookings) * 100.0 / prevTotalBookings) : 0;
             double completionTrend = prevCompletionRate > 0 ? 
                     (completionRate - prevCompletionRate) : 0;
             
-            // Cập nhật giao diện
             totalBookingsLabel.setText(String.valueOf(totalBookings));
             completionRateLabel.setText(String.format("%.1f%%", completionRate));
             popularServiceLabel.setText(popularService);
             servicePercentLabel.setText(String.format("%.1f%% tổng số lịch hẹn", servicePercent));
             loyalCustomerLabel.setText(String.valueOf(loyalCustomers) + " khách hàng");
             
-            // Biểu thị xu hướng (tăng/giảm)
             bookingTrendLabel.setText(String.format("%.1f%% %s", 
                     Math.abs(bookingTrend), bookingTrend >= 0 ? "↑" : "↓"));
             completionTrendLabel.setText(String.format("%.1f%% %s", 
                     Math.abs(completionTrend), completionTrend >= 0 ? "↑" : "↓"));
             
-            // Thiết lập màu sắc cho xu hướng
             bookingTrendLabel.setStyle(bookingTrend >= 0 ? 
                     "-fx-text-fill: #4CAF50; -fx-font-weight: bold;" : 
                     "-fx-text-fill: #F44336; -fx-font-weight: bold;");
@@ -714,6 +591,7 @@ public class BookingViewController implements Initializable {
     @FXML
     private void exportReport(ActionEvent event) {
         try {
+            String exportType = exportTypeSelector.getValue();
             String month = monthSelector.getValue();
             String year = yearSelector.getValue();
             if (month == null || year == null) {
@@ -722,21 +600,54 @@ public class BookingViewController implements Initializable {
                 return;
             }
             
-            // Xuất báo cáo thống kê sang file CSV
-            String fileName = "statistics_report_" + year + "_" + month + ".csv";
-            try (FileWriter writer = new FileWriter(fileName)) {
-                writer.write("Thống kê, Giá trị\n");
-                writer.write("Tổng số lịch hẹn," + totalBookingsLabel.getText() + "\n");
-                writer.write("Tỉ lệ hoàn thành," + completionRateLabel.getText() + "\n");
-                writer.write("Dịch vụ phổ biến nhất," + popularServiceLabel.getText() + "\n");
-                writer.write("Tỷ lệ dịch vụ phổ biến," + servicePercentLabel.getText() + "\n");
-                writer.write("Khách hàng thân thiết," + loyalCustomerLabel.getText() + "\n");
-                writer.write("So với tháng trước (lịch hẹn)," + bookingTrendLabel.getText() + "\n");
-                writer.write("So với tháng trước (tỉ lệ hoàn thành)," + completionTrendLabel.getText() + "\n");
+            String fileName = (exportType.equals("Báo cáo thống kê") ? 
+                    "statistics_report_" : "bookings_export_") + year + "_" + month + ".csv";
+            
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Lưu báo cáo");
+            fileChooser.getExtensionFilters().add(
+                    new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
+            fileChooser.setInitialFileName(fileName);
+            
+            File file = fileChooser.showSaveDialog(null);
+            if (file != null) {
+                try (FileWriter writer = new FileWriter(file)) {
+                    if (exportType.equals("Báo cáo thống kê")) {
+                        writer.write("Thống kê,Giá trị\n");
+                        writer.write("Tổng số lịch hẹn," + totalBookingsLabel.getText() + "\n");
+                        writer.write("Tỉ lệ hoàn thành," + completionRateLabel.getText() + "\n");
+                        writer.write("Dịch vụ phổ biến nhất," + popularServiceLabel.getText() + "\n");
+                        writer.write("Tỷ lệ dịch vụ phổ biến," + servicePercentLabel.getText() + "\n");
+                        writer.write("Khách hàng thân thiết," + loyalCustomerLabel.getText() + "\n");
+                        writer.write("So với tháng trước (lịch hẹn)," + bookingTrendLabel.getText() + "\n");
+                        writer.write("So với tháng trước (tỉ lệ hoàn thành)," + completionTrendLabel.getText() + "\n");
+                    } else {
+                        LocalDate startDate = LocalDate.of(Integer.parseInt(year), Integer.parseInt(month), 1);
+                        LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
+                        List<Booking> bookings = bookingService.getBookingsByDateRange(startDate, endDate);
+                        upcomingBookingList = FXCollections.observableArrayList(bookings);
+                        
+                        writer.write("Mã đặt lịch,Ngày,Giờ,Khách hàng,Số điện thoại,Thú cưng,Dịch vụ,Trạng thái,Nhân viên phụ trách\n");
+                        for (Booking booking : upcomingBookingList) {
+                            String serviceName = getServiceNameFromBooking(booking);
+                            String line = String.format("%d,%s,%s,%s,%s,%s,%s,%s,%s\n",
+                                    booking.getBookingId(),
+                                    booking.getBookingTime().toLocalDate(),
+                                    booking.getBookingTime().format(DateTimeFormatter.ofPattern("HH:mm")),
+                                    booking.getCustomer() != null ? booking.getCustomer().getFullName() : "",
+                                    booking.getCustomer() != null ? booking.getCustomer().getPhone() : "",
+                                    booking.getPet() != null ? booking.getPet().getName() : "",
+                                    serviceName,
+                                    booking.getStatus() != null ? booking.getStatus().name() : "",
+                                    booking.getStaff() != null ? booking.getStaff().getFullName() : "");
+                            writer.write(line);
+                        }
+                    }
+                    showAlert(Alert.AlertType.INFORMATION, "Thành công", "Đã xuất báo cáo",
+                            "Danh sách đã được xuất sang " + file.getAbsolutePath());
+                    statusMessageLabel.setText("Đã xuất " + exportType.toLowerCase() + " sang " + file.getAbsolutePath());
+                }
             }
-            showAlert(Alert.AlertType.INFORMATION, "Thành công", "Đã xuất báo cáo",
-                    "Báo cáo thống kê đã được xuất sang " + fileName);
-            statusMessageLabel.setText("Đã xuất báo cáo thống kê sang " + fileName);
         } catch (IOException e) {
             showAlert(Alert.AlertType.ERROR, "Lỗi", "Không thể xuất báo cáo",
                     "Lỗi khi ghi file: " + e.getMessage());
@@ -773,7 +684,6 @@ public class BookingViewController implements Initializable {
 
     @FXML
     private void exitApplication(ActionEvent event) {
-        // Hiển thị hộp thoại xác nhận trước khi thoát
         Alert confirmExit = new Alert(Alert.AlertType.CONFIRMATION);
         confirmExit.setTitle("Xác nhận");
         confirmExit.setHeaderText("Thoát ứng dụng");
@@ -781,7 +691,6 @@ public class BookingViewController implements Initializable {
         
         Optional<ButtonType> result = confirmExit.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
-            // Quay lại màn hình chính
             SceneSwitcher.switchScene("dashboard.fxml");
         }
     }
