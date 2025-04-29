@@ -13,25 +13,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Service for managing staff work schedules
- */
+
 public class ScheduleService {
     private final WorkScheduleRepository workScheduleRepository;
     
-    /**
-     * Constructor - initializes repository
-     */
     public ScheduleService() {
         this.workScheduleRepository = WorkScheduleRepository.getInstance();
     }
 
-    /**
-     * Get schedules for a specific staff member on a specific date
-     * @param staffId Staff ID
-     * @param date Date to get schedules for
-     * @return List of work schedules
-     */
+
     public List<WorkSchedule> getSchedulesByStaffAndDate(int staffId, LocalDate date) {
         if (date == null) {
             return new ArrayList<>();
@@ -40,13 +30,7 @@ public class ScheduleService {
         return workScheduleRepository.selectByCondition(condition, staffId, java.sql.Date.valueOf(date));
     }
 
-    /**
-     * Get schedules for a specific staff member within a date range
-     * @param staffId Staff ID
-     * @param startDate Start date
-     * @param endDate End date
-     * @return List of work schedules
-     */
+
     public List<WorkSchedule> getSchedulesByStaffAndDateRange(int staffId, LocalDate startDate, LocalDate endDate) {
         if (startDate == null || endDate == null) {
             return new ArrayList<>();
@@ -57,13 +41,7 @@ public class ScheduleService {
                 java.sql.Date.valueOf(endDate));
     }
     
-    /**
-     * Get schedules by staff ID, date and shift
-     * @param staffId Staff ID
-     * @param date Date to get schedules for
-     * @param shift Shift to filter by
-     * @return List of work schedules
-     */
+
     public List<WorkSchedule> getSchedulesByStaffDateAndShift(int staffId, LocalDate date, Shift shift) {
         if (date == null || shift == null) {
             return new ArrayList<>();
@@ -73,28 +51,13 @@ public class ScheduleService {
                 java.sql.Date.valueOf(date), shift.name());
     }
     
-    /**
-     * Get schedules for a month
-     * @param staffId Staff ID
-     * @param month Month (1-12)
-     * @param year Year
-     * @return List of work schedules
-     */
+
     public List<WorkSchedule> getSchedulesForMonth(int staffId, int month, int year) {
         LocalDate startOfMonth = LocalDate.of(year, month, 1);
         LocalDate endOfMonth = startOfMonth.plusMonths(1).minusDays(1);
         return getSchedulesByStaffAndDateRange(staffId, startOfMonth, endOfMonth);
     }
 
-    /**
-     * Register a new shift for a staff member
-     * @param staffId Staff ID
-     * @param date Work date
-     * @param shift Shift type
-     * @param location Work location
-     * @param note Optional note
-     * @return true if successfully registered, false otherwise
-     */
     public boolean registerShift(int staffId, LocalDate date, Shift shift, String location, String note) {
         // Check if the staff already has a shift for this date and time
         List<WorkSchedule> existingSchedules = getSchedulesByStaffDateAndShift(staffId, date, shift);
@@ -119,13 +82,7 @@ public class ScheduleService {
         return workScheduleRepository.insert(schedule) > 0;
     }
     
-    /**
-     * Request leave for a specific date
-     * @param staffId Staff ID
-     * @param date Leave date
-     * @param reason Reason for leave
-     * @return true if request was successful, false otherwise
-     */
+
     public boolean requestLeave(int staffId, LocalDate date, String reason) {
         // Implementation would depend on how leaves are handled in your system
         // This is a placeholder implementation
@@ -141,13 +98,41 @@ public class ScheduleService {
         return workScheduleRepository.insert(schedule) > 0;
     }
     
-    /**
-     * Get monthly statistics for a staff member
-     * @param staffId Staff ID
-     * @param month Month (1-12)
-     * @param year Year
-     * @return Map containing statistics
-     */
+   
+    public boolean requestShiftChange(int staffId, LocalDate currentDate, Shift currentShift, 
+                                     LocalDate desiredDate, Shift desiredShift, String reason) {
+        // Validate inputs
+        if (currentDate == null || currentShift == null || desiredDate == null || desiredShift == null) {
+            return false;
+        }
+
+        // Check if the current shift exists
+        List<WorkSchedule> currentSchedules = getSchedulesByStaffDateAndShift(staffId, currentDate, currentShift);
+        if (currentSchedules.isEmpty()) {
+            return false; // Current shift does not exist
+        }
+
+        // Check if the desired shift is already taken by the staff
+        List<WorkSchedule> desiredSchedules = getSchedulesByStaffDateAndShift(staffId, desiredDate, desiredShift);
+        if (!desiredSchedules.isEmpty()) {
+            return false; // Desired shift is already registered
+        }
+
+        // Create a new work schedule entry to record the shift change request
+        WorkSchedule schedule = new WorkSchedule();
+        Staff staff = new Staff();
+        staff.setId(staffId);
+        schedule.setStaff(staff);
+        schedule.setWorkDate(currentDate); // Store the current date for reference
+        schedule.setShift(currentShift); // Store the current shift
+        schedule.setNote("Shift change request: From " + currentShift.name() + " on " + 
+                         currentDate + " to " + desiredShift.name() + " on " + 
+                         desiredDate + ". Reason: " + reason);
+        
+        // Save the shift change request
+        return workScheduleRepository.insert(schedule) > 0;
+    }
+
     public Map<String, Object> getMonthlyStatistics(int staffId, int month, int year) {
         List<WorkSchedule> schedules = getSchedulesForMonth(staffId, month, year);
         Map<String, Object> stats = new HashMap<>();
@@ -162,38 +147,32 @@ public class ScheduleService {
             Shift shift = schedule.getShift();
             if (shift == Shift.MORNING) {
                 morningShifts++;
-                totalHours += 4; // Assuming morning shift is 4 hours
+                totalHours += 4; 
             } else if (shift == Shift.AFTERNOON) {
                 afternoonShifts++;
-                totalHours += 4; // Assuming afternoon shift is 4 hours
+                totalHours += 4; 
             } else if (shift == Shift.EVENING) {
                 eveningShifts++;
-                totalHours += 4; // Assuming evening shift is 4 hours
+                totalHours += 4; 
             }
         }
-        
-        // Assuming standard working hours per month is 160
+
         if (totalHours > 160) {
             overtimeHours = totalHours - 160;
         }
-        
-        // Populate statistics map
+
         stats.put("totalShifts", totalShifts);
         stats.put("morningShifts", morningShifts);
         stats.put("afternoonShifts", afternoonShifts);
         stats.put("eveningShifts", eveningShifts);
         stats.put("totalHours", totalHours);
         stats.put("overtimeHours", overtimeHours);
-        stats.put("standardWorkdays", totalShifts / 2); // Assuming 2 shifts per day is standard
-        stats.put("leaveCount", 0); // Would need leave tracking to calculate this
+        stats.put("standardWorkdays", totalShifts / 2);
+        stats.put("leaveCount", 0); 
         
         return stats;
     }
     
-    /**
-     * Set default start and end times for a schedule based on the shift
-     * @param schedule The schedule to set times for
-     */
     private void setDefaultTimes(WorkSchedule schedule) {
         switch (schedule.getShift()) {
             case MORNING:

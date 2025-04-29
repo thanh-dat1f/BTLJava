@@ -124,7 +124,7 @@ public class InvoiceViewController implements Initializable {
     @FXML private ProgressBar progressBar;
     @FXML private Label statusMessageLabel;
 
-    // Repositories và Services
+    // Repositories and Services
     private final InvoiceRepository invoiceRepository;
     private final OrderRepository orderRepository;
     private final OrderDetailRepository orderDetailRepository;
@@ -138,7 +138,7 @@ public class InvoiceViewController implements Initializable {
     private ObservableList<RevenueReport> revenueReports;
     private Invoice selectedInvoice;
     
-    // Khởi tạo controller
+    // Initialize controller
     public InvoiceViewController() {
         this.invoiceRepository = InvoiceRepository.getInstance();
         this.orderRepository = OrderRepository.getInstance();
@@ -152,53 +152,53 @@ public class InvoiceViewController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // Khởi tạo ngày giờ và thông tin nhân viên
+        // Initialize date time and staff information
         updateDateTime();
         Staff currentStaff = Session.getCurrentStaff();
         staffNameLabel.setText("Thu ngân: " + (currentStaff != null ? currentStaff.getFullName() : "N/A"));
         cashierNameLabel.setText(currentStaff != null ? currentStaff.getFullName() : "N/A");
 
-        // Khởi tạo các cột bảng
+        // Initialize table columns
         initializeTableColumns();
 
-        // Khởi tạo bảng chi tiết hóa đơn
+        // Initialize invoice items table
         initializeInvoiceItemsTable();
 
-        // Thiết lập DatePicker
+        // Setup DatePickers
         setupDatePickers();
 
-        // Thiết lập ComboBox
+        // Setup ComboBoxes
         setupComboBoxes();
 
-        // Tải dữ liệu hóa đơn
+        // Load invoices
         loadInvoices();
 
-        // Khởi tạo tab tạo hóa đơn
+        // Initialize invoice creation tab
         initializeInvoiceCreation();
 
-        // Thiết lập lắng nghe sự kiện chọn hóa đơn
+        // Setup invoice selection listener
         invoiceTable.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> handleInvoiceSelection(newValue));
 
-        // Thiết lập hành động tìm kiếm
+        // Setup search field
         setupSearchField();
 
-        // Thiết lập hiển thị nút dựa trên quyền
+        // Setup button visibility based on permissions
         setupButtonVisibility();
 
-        // Cập nhật nhãn tóm tắt
+        // Update summary labels
         updateSummaryLabels();
         
-        // Timer để cập nhật thời gian
+        // Timer to update time
         Timer timer = new Timer(true);
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
                 javafx.application.Platform.runLater(() -> updateDateTime());
             }
-        }, 0, 60000); // Cập nhật mỗi phút
+        }, 0, 60000); // Update every minute
         
-        // Thiết lập lắng nghe sự kiện cho các trường nhập liệu
+        // Setup event listeners for input fields
         setupEventListeners();
     }
 
@@ -208,7 +208,7 @@ public class InvoiceViewController implements Initializable {
     }
 
     private void initializeTableColumns() {
-        // Các cột bảng hóa đơn
+        // Invoice table columns
         idColumn.setCellValueFactory(new PropertyValueFactory<>("invoiceId"));
         orderIdColumn.setCellValueFactory(cellData -> {
             Invoice invoice = cellData.getValue();
@@ -244,13 +244,13 @@ public class InvoiceViewController implements Initializable {
                     return new SimpleStringProperty("N/A");
                 }
                 
-                // Lấy danh sách chi tiết đơn hàng từ database
+                // Get order details from database
                 List<OrderDetail> details = orderDetailRepository.selectByCondition("order_id = ?", invoice.getOrder().getOrderId());
                 if (details.isEmpty()) {
                     return new SimpleStringProperty("Không có dịch vụ");
                 }
                 
-                // Nếu có nhiều dịch vụ, lấy dịch vụ đầu tiên và đánh dấu có thêm dịch vụ khác
+                // If multiple services, show first with "+X more" indicator
                 String serviceName = details.get(0).getService().getName();
                 if (details.size() > 1) {
                     serviceName += " + " + (details.size() - 1) + " dịch vụ khác";
@@ -276,12 +276,12 @@ public class InvoiceViewController implements Initializable {
                 cellData.getValue().getStatus() != null
                         ? cellData.getValue().getStatus().name() : "N/A"));
 
-        // Các cột bảng báo cáo
+        // Revenue report table
         initializeRevenueReportTable();
     }
 
     private void initializeRevenueReportTable() {
-        // Thiết lập các cột cho bảng báo cáo doanh thu
+        // Setup columns for revenue report table
         if (revenueReportTable.getColumns().size() >= 8) {
             revenueReportTable.getColumns().get(0).setCellValueFactory(new PropertyValueFactory<>("date"));
             revenueReportTable.getColumns().get(1).setCellValueFactory(new PropertyValueFactory<>("invoiceCount"));
@@ -296,7 +296,7 @@ public class InvoiceViewController implements Initializable {
 
     private void initializeInvoiceItemsTable() {
         invoiceItemsTable.setItems(invoiceItems);
-        // Cấu hình các cột
+        // Configure columns
         if (invoiceItemsTable.getColumns().size() >= 6) {
             invoiceItemsTable.getColumns().get(0).setCellValueFactory(new PropertyValueFactory<>("index"));
             invoiceItemsTable.getColumns().get(1).setCellValueFactory(new PropertyValueFactory<>("serviceName"));
@@ -304,7 +304,7 @@ public class InvoiceViewController implements Initializable {
             invoiceItemsTable.getColumns().get(3).setCellValueFactory(new PropertyValueFactory<>("unitPrice"));
             invoiceItemsTable.getColumns().get(4).setCellValueFactory(new PropertyValueFactory<>("total"));
             
-            // Cột "Xóa"
+            // "Delete" column
             TableColumn<InvoiceItem, Void> deleteColumn = (TableColumn<InvoiceItem, Void>) invoiceItemsTable.getColumns().get(5);
             deleteColumn.setCellFactory(column -> new TableCell<InvoiceItem, Void>() {
                 private final Button deleteButton = new Button("Xóa");
@@ -335,7 +335,7 @@ public class InvoiceViewController implements Initializable {
     }
 
     private void setupComboBoxes() {
-        // Bộ lọc trạng thái
+        // Status filter
         ObservableList<String> statusList = FXCollections.observableArrayList("Tất cả");
         for (StatusEnum status : StatusEnum.values()) {
             statusList.add(status.name());
@@ -343,7 +343,7 @@ public class InvoiceViewController implements Initializable {
         statusFilter.setItems(statusList);
         statusFilter.setValue("Tất cả");
 
-        // Bộ lọc phương thức thanh toán
+        // Payment method filter
         ObservableList<String> paymentMethodList = FXCollections.observableArrayList("Tất cả");
         for (PaymentMethodEnum method : PaymentMethodEnum.values()) {
             paymentMethodList.add(method.name());
@@ -351,10 +351,10 @@ public class InvoiceViewController implements Initializable {
         paymentMethodFilter.setItems(paymentMethodList);
         paymentMethodFilter.setValue("Tất cả");
 
-        // Bộ chọn dịch vụ - Tải từ database
+        // Service selector - load from database
         loadServices();
         
-        // Sử dụng các giá trị hợp lệ từ PaymentMethodEnum
+        // Payment method combo box
         ObservableList<String> paymentMethods = FXCollections.observableArrayList();
         for (PaymentMethodEnum method : PaymentMethodEnum.values()) {
             paymentMethods.add(method.name());
@@ -362,14 +362,14 @@ public class InvoiceViewController implements Initializable {
         paymentMethodComboBox.setItems(paymentMethods);
         paymentMethodComboBox.setValue(PaymentMethodEnum.CASH.name());
 
-        // Bộ chọn loại báo cáo
+        // Report type selector
         reportTypeSelector.getItems().addAll("Doanh thu theo ngày", "Doanh thu theo dịch vụ", "Doanh thu theo phương thức thanh toán");
         reportTypeSelector.setValue("Doanh thu theo ngày");
     }
     
     private void loadServices() {
         try {
-            // Lấy danh sách dịch vụ từ database
+            // Load services from database
             List<Service> services = serviceRepository.selectAll();
             ObservableList<String> serviceNames = FXCollections.observableArrayList();
             
@@ -402,7 +402,7 @@ public class InvoiceViewController implements Initializable {
     }
     
     private void setupEventListeners() {
-        // Thiết lập sự kiện cho discountField để tính lại tổng tiền khi thay đổi
+        // Set up listener for discount field to recalculate total on change
         discountField.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.matches("\\d*")) {
                 discountField.setText(newValue.replaceAll("[^\\d]", ""));
@@ -411,7 +411,7 @@ public class InvoiceViewController implements Initializable {
             }
         });
         
-        // Thiết lập sự kiện cho amountPaidField để tính tiền thối
+        // Set up listener for amount paid field to calculate change
         amountPaidField.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.matches("\\d*")) {
                 amountPaidField.setText(newValue.replaceAll("[^\\d]", ""));
@@ -420,7 +420,7 @@ public class InvoiceViewController implements Initializable {
             }
         });
         
-        // Thiết lập sự kiện cho usePointsCheckbox
+        // Set up listener for use points checkbox
         usePointsCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
             pointsUsedField.setDisable(!newValue);
             if (!newValue) {
@@ -430,7 +430,7 @@ public class InvoiceViewController implements Initializable {
             updateInvoiceSummary();
         });
         
-        // Thiết lập sự kiện cho pointsUsedField
+        // Set up listener for points used field
         pointsUsedField.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.matches("\\d*")) {
                 pointsUsedField.setText(newValue.replaceAll("[^\\d]", ""));
@@ -468,13 +468,13 @@ public class InvoiceViewController implements Initializable {
     }
 
     private void initializeInvoiceCreation() {
-        // Kiểm tra bookingId từ Session
+        // Check for bookingId from Session
         Object bookingIdObj = Session.getInstance().getAttribute("selectedBookingId");
         if (bookingIdObj instanceof Integer) {
             int bookingId = (Integer) bookingIdObj;
             
             try {
-                // Lấy thông tin booking từ database
+                // Get booking info from database
                 String sql = "SELECT b.booking_id, b.booking_time, " +
                       "c.customer_id, c.point, p.person_id, p.full_name, p.phone, p.email, p.address, " +
                       "pet.pet_id, pet.name AS pet_name " +
@@ -482,7 +482,7 @@ public class InvoiceViewController implements Initializable {
                       "JOIN customer c ON b.customer_id = c.customer_id " +
                       "JOIN person p ON c.customer_id = p.person_id " +
                       "JOIN pet ON b.pet_id = pet.pet_id " +
-                      "WHERE b.booking_id = ?";
+                      "WHERE b.booking_id = ?"; 
                 
                 try (Connection conn = DatabaseConnection.getConnection();
                      PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -490,7 +490,7 @@ public class InvoiceViewController implements Initializable {
                     stmt.setInt(1, bookingId);
                     try (ResultSet rs = stmt.executeQuery()) {
                         if (rs.next()) {
-                            // Điền thông tin khách hàng
+                            // Fill customer info
                             int customerId = rs.getInt("customer_id");
                             String customerName = rs.getString("full_name");
                             String customerPhone = rs.getString("phone");
@@ -503,11 +503,11 @@ public class InvoiceViewController implements Initializable {
                             customerEmailField.setText(customerEmail);
                             customerPointsLabel.setText(String.valueOf(points));
                             
-                            // Tạo hóa đơn mới
+                            // Create new invoice
                             invoiceIdLabel.setText("HĐ-" + String.format("%05d", getNextInvoiceId()));
                             invoiceDateLabel.setText(LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
                             
-                            // Lấy thông tin dịch vụ của booking
+                            // Get booking services
                             loadBookingServices(bookingId);
                         }
                     }
@@ -516,7 +516,7 @@ public class InvoiceViewController implements Initializable {
                 showAlert(AlertType.ERROR, "Lỗi", "Không thể tải thông tin booking", e.getMessage());
             }
         } else {
-            // Khởi tạo hóa đơn mới trống
+            // Initialize new empty invoice
             subtotalLabel.setText("0 VND");
             discountAmountLabel.setText("0 VND");
             totalAmountLabel.setText("0 VND");
@@ -541,7 +541,7 @@ public class InvoiceViewController implements Initializable {
         } catch (SQLException e) {
             System.err.println("Lỗi khi lấy ID hóa đơn tiếp theo: " + e.getMessage());
         }
-        return 1; // Mặc định là 1 nếu không có hóa đơn
+        return 1; // Default to 1 if no invoices exist
     }
     
     private void loadBookingServices(int bookingId) {
@@ -582,7 +582,7 @@ public class InvoiceViewController implements Initializable {
         double discount = 0;
         double pointsValue = 0;
         
-        // Tính giảm giá nếu có
+        // Calculate discount if provided
         try {
             if (discountField.getText() != null && !discountField.getText().isEmpty()) {
                 double discountPercent = Double.parseDouble(discountField.getText());
@@ -591,31 +591,31 @@ public class InvoiceViewController implements Initializable {
                 }
             }
         } catch (NumberFormatException e) {
-            // Bỏ qua nếu không phải số
+            // Ignore if not a number
         }
         
-        // Tính điểm tích lũy sử dụng
+        // Calculate points value if used
         if (usePointsCheckbox.isSelected() && pointsUsedField.getText() != null && !pointsUsedField.getText().isEmpty()) {
             try {
                 int pointsUsed = Integer.parseInt(pointsUsedField.getText());
-                // Giả sử 1 điểm = 1,000 VND
+                // Assume 1 point = 1,000 VND
                 pointsValue = pointsUsed * 1000;
-                // Hiển thị giá trị điểm
+                // Update points value display
                 pointsValueLabel.setText(String.format("%,.0f VND", pointsValue));
             } catch (NumberFormatException e) {
-                // Bỏ qua nếu không phải số
+                // Ignore if not a number
             }
         }
         
         double total = subtotal - discount - pointsValue;
-        if (total < 0) total = 0; // Đảm bảo tổng không âm
+        if (total < 0) total = 0; // Ensure total is not negative
         
-        // Cập nhật giao diện
+        // Update UI
         subtotalLabel.setText(String.format("%,.0f VND", subtotal));
         discountAmountLabel.setText(String.format("%,.0f VND", discount));
         totalAmountLabel.setText(String.format("%,.0f VND", total));
         
-        // Cập nhật tiền thối lại
+        // Update change amount
         updateChangeAmount();
     }
     
@@ -623,7 +623,7 @@ public class InvoiceViewController implements Initializable {
         try {
             if (amountPaidField.getText() != null && !amountPaidField.getText().isEmpty()) {
                 double amountPaid = Double.parseDouble(amountPaidField.getText());
-                // Lấy tổng thanh toán từ Label
+                // Get total amount from label
                 String totalText = totalAmountLabel.getText().replaceAll("[^\\d]", "");
                 double total = Double.parseDouble(totalText);
                 double change = amountPaid - total;
@@ -638,7 +638,7 @@ public class InvoiceViewController implements Initializable {
         try {
             if (pointsUsedField.getText() != null && !pointsUsedField.getText().isEmpty()) {
                 int pointsUsed = Integer.parseInt(pointsUsedField.getText());
-                // Giả sử 1 điểm = 1,000 VND
+                // Assume 1 point = 1,000 VND
                 double pointsValue = pointsUsed * 1000;
                 pointsValueLabel.setText(String.format("%,.0f VND", pointsValue));
                 
@@ -764,9 +764,7 @@ public class InvoiceViewController implements Initializable {
         } catch (Exception e) {
             showAlert(AlertType.ERROR, "Lỗi", "Không thể tải chi tiết hóa đơn", e.getMessage());
         }
-    }
-    
-    private void searchInvoices() {
+    }    private void searchInvoices() {
         String searchQuery = searchField.getText().trim().toLowerCase();
         
         if (searchQuery.isEmpty()) {
@@ -877,7 +875,7 @@ public class InvoiceViewController implements Initializable {
             Customer customer = customerRepository.findByPhone(searchQuery);
             
             if (customer != null) {
-                customerIdField.setText("KH-" + String.format("%05d", customer.getCustomerId()));
+                customerIdField.setText("KH-" + String.format("%05d", customer.getId()));
                 customerNameField.setText(customer.getFullName());
                 customerPhoneField.setText(customer.getPhone());
                 customerEmailField.setText(customer.getEmail());
@@ -967,7 +965,7 @@ public class InvoiceViewController implements Initializable {
     }
     
     @FXML
-    private void onViewDetailsButtonClick() {
+    private void viewDetails() {
         if (selectedInvoice == null) {
             showAlert(AlertType.WARNING, "Cảnh báo", "Không có hóa đơn được chọn", "Vui lòng chọn một hóa đơn để xem chi tiết.");
             return;
@@ -991,7 +989,7 @@ public class InvoiceViewController implements Initializable {
     }
     
     @FXML
-    private void onProcessPaymentButtonClick() {
+    private void processPayment() {
         if (selectedInvoice == null) {
             showAlert(AlertType.WARNING, "Cảnh báo", "Không có hóa đơn được chọn", "Vui lòng chọn một hóa đơn để xử lý thanh toán.");
             return;
@@ -1023,156 +1021,14 @@ public class InvoiceViewController implements Initializable {
     }
     
     @FXML
-    private void onCreateInvoiceButtonClick() {
-        // Validate
-        if (invoiceItems.isEmpty()) {
-            showAlert(AlertType.WARNING, "Cảnh báo", "Không có dịch vụ", "Vui lòng thêm ít nhất một dịch vụ.");
-            return;
-        }
+    private void createNewInvoice() {
+        // Reset form
+        resetInvoiceForm();
         
-        if (customerIdField.getText().isEmpty() || customerNameField.getText().isEmpty()) {
-            showAlert(AlertType.WARNING, "Cảnh báo", "Thông tin khách hàng thiếu", "Vui lòng nhập thông tin khách hàng.");
-            return;
-        }
-        
-        // Get customer ID from field
-        int customerId = 0;
-        try {
-            String customerIdText = customerIdField.getText().replace("KH-", "");
-            customerId = Integer.parseInt(customerIdText);
-        } catch (NumberFormatException e) {
-            showAlert(AlertType.ERROR, "Lỗi", "Mã khách hàng không hợp lệ", "Vui lòng kiểm tra lại mã khách hàng.");
-            return;
-        }
-        
-        try {
-            // Create new order
-            Order order = new Order();
-            order.setCustomerId(customerId);
-            order.setOrderDate(Timestamp.valueOf(LocalDateTime.now()));
-            order.setStatus(StatusEnum.COMPLETED);
-            order.setNote(invoiceNoteField.getText());
-            
-            // Save order to get ID
-            int orderId = orderRepository.insert(order);
-            order.setOrderId(orderId);
-            
-            // Create order details
-            for (InvoiceItem item : invoiceItems) {
-                Service service = serviceRepository.findByName(item.getServiceName());
-                if (service != null) {
-                    OrderDetail detail = new OrderDetail();
-                    detail.setOrderId(orderId);
-                    detail.setServiceId(service.getServiceId());
-                    detail.setQuantity(item.getQuantity());
-                    detail.setUnitPrice(BigDecimal.valueOf(item.getUnitPrice()));
-                    orderDetailRepository.insert(detail);
-                }
-            }
-            
-            // Create invoice
-            Invoice invoice = new Invoice();
-            invoice.setOrderId(orderId);
-            invoice.setStaffId(Session.getCurrentStaff().getStaffId());
-            invoice.setPaymentDate(Timestamp.valueOf(LocalDateTime.now()));
-            
-            // Calculate amounts
-            double subtotal = invoiceItems.stream().mapToDouble(InvoiceItem::getTotal).sum();
-            double discountAmount = 0;
-            int discountPercent = 0;
-            
-            if (discountField.getText() != null && !discountField.getText().isEmpty()) {
-                try {
-                    discountPercent = Integer.parseInt(discountField.getText());
-                    if (discountPercent > 0) {
-                        discountAmount = subtotal * discountPercent / 100.0;
-                    }
-                } catch (NumberFormatException e) {
-                    // Ignore if not a number
-                }
-            }
-            
-            // Calculate points value
-            int pointsUsed = 0;
-            if (usePointsCheckbox.isSelected() && pointsUsedField.getText() != null && !pointsUsedField.getText().isEmpty()) {
-                try {
-                    pointsUsed = Integer.parseInt(pointsUsedField.getText());
-                } catch (NumberFormatException e) {
-                    // Ignore if not a number
-                }
-            }
-            
-            // Calculate total
-            double pointsValue = pointsUsed * 1000; // Assuming 1 point = 1000 VND
-            double total = subtotal - discountAmount - pointsValue;
-            if (total < 0) total = 0;
-            
-            // Set amount paid
-            double amountPaid = 0;
-            if (amountPaidField.getText() != null && !amountPaidField.getText().isEmpty()) {
-                try {
-                    amountPaid = Double.parseDouble(amountPaidField.getText());
-                } catch (NumberFormatException e) {
-                    // Ignore if not a number
-                }
-            }
-            
-            // Set invoice fields
-            invoice.setSubtotal(BigDecimal.valueOf(subtotal));
-            invoice.setDiscountPercent(discountPercent);
-            invoice.setDiscountAmount(BigDecimal.valueOf(discountAmount));
-            invoice.setPointsUsed(pointsUsed);
-            invoice.setTotal(BigDecimal.valueOf(total));
-            invoice.setAmountPaid(BigDecimal.valueOf(amountPaid));
-            invoice.setNote(invoiceNoteField.getText());
-            invoice.setPromotionCode(promotionCodeField.getText());
-            
-            // Set payment method
-            try {
-                PaymentMethodEnum paymentMethod = PaymentMethodEnum.valueOf(paymentMethodComboBox.getValue());
-                invoice.setPaymentMethod(paymentMethod);
-            } catch (IllegalArgumentException e) {
-                invoice.setPaymentMethod(PaymentMethodEnum.CASH); // Default to cash
-            }
-            
-            // Set status based on payment vs total
-            if (amountPaid >= total) {
-                invoice.setStatus(StatusEnum.PAID);
-                
-                // Update customer points if paid
-                Customer customer = customerRepository.selectById(customerId);
-                if (customer != null) {
-                    // Deduct points used
-                    int currentPoints = customer.getPoint() - pointsUsed;
-                    // Add new points (1 point for each 100,000 VND)
-                    int newPoints = (int)(total / 100000);
-                    customer.setPoint(Math.max(0, currentPoints + newPoints));
-                    customerRepository.update(customer);
-                }
-            } else {
-                invoice.setStatus(StatusEnum.PENDING);
-            }
-            
-            // Save invoice
-            int invoiceId = invoiceRepository.insert(invoice);
-            
-            // Show success message
-            showAlert(AlertType.INFORMATION, "Thành công", "Tạo hóa đơn thành công", 
-                    "Hóa đơn #" + invoiceId + " đã được tạo thành công.");
-            
-            // Print receipt
-            if (invoice.getStatus() == StatusEnum.PAID) {
-                printReceipt(invoiceId);
-            }
-            
-            // Reset form
-            resetInvoiceForm();
-            
-            // Refresh table
-            loadInvoices();
-            
-        } catch (Exception e) {
-            showAlert(AlertType.ERROR, "Lỗi", "Không thể tạo hóa đơn", e.getMessage());
+        // Switch to create invoice tab
+        TabPane tabPane = (TabPane) invoiceTable.getScene().lookup("#tabPane");
+        if (tabPane != null) {
+            tabPane.getSelectionModel().select(1); // Select create invoice tab
         }
     }
     
@@ -1206,7 +1062,213 @@ public class InvoiceViewController implements Initializable {
     }
     
     @FXML
-    private void onGenerateReportButtonClick() {
+    private void processPaymentAndPrint() {
+        processPayment();
+        reprintInvoice();
+    }
+    
+    @FXML
+    private void applyDiscount() {
+        if (selectedInvoice == null) {
+            showAlert(AlertType.WARNING, "Cảnh báo", "Không có hóa đơn được chọn", "Vui lòng chọn một hóa đơn để áp dụng khuyến mãi.");
+            return;
+        }
+        
+        // Open discount dialog
+        TextInputDialog dialog = new TextInputDialog("");
+        dialog.setTitle("Áp dụng khuyến mãi");
+        dialog.setHeaderText("Nhập phần trăm khuyến mãi");
+        dialog.setContentText("Phần trăm giảm giá:");
+
+        Optional<String> result = dialog.showAndWait();
+        result.ifPresent(percent -> {
+            try {
+                int discountPercent = Integer.parseInt(percent);
+                if (discountPercent <= 0 || discountPercent > 100) {
+                    showAlert(AlertType.WARNING, "Cảnh báo", "Giá trị không hợp lệ", 
+                            "Phần trăm khuyến mãi phải nằm trong khoảng 1-100%.");
+                    return;
+                }
+                
+                // Apply discount to invoice
+                applyDiscountToInvoice(selectedInvoice, discountPercent);
+                
+            } catch (NumberFormatException e) {
+                showAlert(AlertType.WARNING, "Cảnh báo", "Giá trị không hợp lệ", 
+                        "Vui lòng nhập một số nguyên cho phần trăm khuyến mãi.");
+            }
+        });
+    }
+    
+    private void applyDiscountToInvoice(Invoice invoice, int discountPercent) {
+        try {
+            // Calculate new total with discount
+            BigDecimal subtotal = invoice.getSubtotal() != null ? invoice.getSubtotal() : BigDecimal.ZERO;
+            BigDecimal discountAmount = subtotal.multiply(BigDecimal.valueOf(discountPercent)).divide(BigDecimal.valueOf(100));
+            BigDecimal newTotal = subtotal.subtract(discountAmount);
+            
+            // Update invoice
+            invoice.setDiscountPercent(discountPercent);
+            invoice.setDiscountAmount(discountAmount);
+            invoice.setTotal(newTotal);
+            
+            // Save to database
+            boolean success = invoiceRepository.update(invoice) > 0;
+            if (success) {
+                showAlert(AlertType.INFORMATION, "Thành công", "Đã áp dụng khuyến mãi", 
+                        "Đã áp dụng khuyến mãi " + discountPercent + "% vào hóa đơn.");
+                
+                // Refresh data
+                loadInvoices();
+            } else {
+                showAlert(AlertType.ERROR, "Lỗi", "Không thể áp dụng khuyến mãi", 
+                        "Đã xảy ra lỗi khi cập nhật hóa đơn.");
+            }
+        } catch (Exception e) {
+            showAlert(AlertType.ERROR, "Lỗi", "Không thể áp dụng khuyến mãi", e.getMessage());
+        }
+    }
+    
+    @FXML
+    private void reprintInvoice() {
+        if (selectedInvoice == null) {
+            showAlert(AlertType.WARNING, "Cảnh báo", "Không có hóa đơn được chọn", "Vui lòng chọn một hóa đơn để in lại.");
+            return;
+        }
+        
+        try {
+            // Generate PDF for printing
+            String fileName = "invoice_" + selectedInvoice.getInvoiceId() + ".pdf";
+            invoiceService.generateInvoicePDF(selectedInvoice.getOrder().getOrderId(), fileName);
+            
+            // Open PDF file
+            File file = new File(fileName);
+            if (file.exists()) {
+                java.awt.Desktop.getDesktop().open(file);
+                showAlert(AlertType.INFORMATION, "Thành công", "Đã mở file hóa đơn", 
+                        "Hóa đơn đã được mở bằng ứng dụng mặc định.");
+            } else {
+                showAlert(AlertType.ERROR, "Lỗi", "Không thể mở file hóa đơn", 
+                        "File không tồn tại: " + fileName);
+            }
+        } catch (Exception e) {
+            showAlert(AlertType.ERROR, "Lỗi", "Không thể in hóa đơn", e.getMessage());
+        }
+    }
+    
+    @FXML
+    private void sendEmail() {
+        if (selectedInvoice == null) {
+            showAlert(AlertType.WARNING, "Cảnh báo", "Không có hóa đơn được chọn", "Vui lòng chọn một hóa đơn để gửi email.");
+            return;
+        }
+        
+        try {
+            // Check if customer has email
+            Customer customer = selectedInvoice.getOrder().getCustomer();
+            if (customer == null || customer.getEmail() == null || customer.getEmail().isEmpty()) {
+                showAlert(AlertType.WARNING, "Cảnh báo", "Thiếu thông tin email", 
+                        "Khách hàng không có địa chỉ email.");
+                return;
+            }
+            
+            // Send invoice by email
+            invoiceService.sendInvoiceByEmail(selectedInvoice.getInvoiceId());
+            
+            showAlert(AlertType.INFORMATION, "Thành công", "Đã gửi hóa đơn", 
+                    "Hóa đơn đã được gửi đến " + customer.getEmail());
+            
+        } catch (Exception e) {
+            showAlert(AlertType.ERROR, "Lỗi", "Không thể gửi email", e.getMessage());
+        }
+    }
+    
+    @FXML
+    private void processRefund() {
+        if (selectedInvoice == null) {
+            showAlert(AlertType.WARNING, "Cảnh báo", "Không có hóa đơn được chọn", "Vui lòng chọn một hóa đơn để hoàn tiền.");
+            return;
+        }
+        
+        if (selectedInvoice.getStatus() != StatusEnum.PAID) {
+            showAlert(AlertType.WARNING, "Cảnh báo", "Hóa đơn chưa thanh toán", 
+                    "Chỉ có thể hoàn tiền cho hóa đơn đã thanh toán.");
+            return;
+        }
+        
+        // Confirm refund
+        Alert alert = new Alert(AlertType.CONFIRMATION);
+        alert.setTitle("Xác nhận hoàn tiền");
+        alert.setHeaderText("Bạn có chắc chắn muốn hoàn tiền?");
+        alert.setContentText("Hoàn tiền cho hóa đơn #" + selectedInvoice.getInvoiceId() + 
+                " với số tiền " + selectedInvoice.getTotal() + " VND?");
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            try {
+                // Update invoice status to CANCELLED
+                selectedInvoice.setStatus(StatusEnum.CANCELLED);
+                boolean success = invoiceRepository.update(selectedInvoice) > 0;
+                
+                if (success) {
+                    // Update order status as well
+                    Order order = selectedInvoice.getOrder();
+                    order.setStatus(StatusEnum.CANCELLED);
+                    orderRepository.update(order);
+                    
+                    showAlert(AlertType.INFORMATION, "Thành công", "Đã hoàn tiền", 
+                            "Hóa đơn đã được đánh dấu là đã hoàn tiền.");
+                    
+                    // Refresh data
+                    loadInvoices();
+                } else {
+                    showAlert(AlertType.ERROR, "Lỗi", "Không thể hoàn tiền", 
+                            "Đã xảy ra lỗi khi cập nhật trạng thái hóa đơn.");
+                }
+            } catch (Exception e) {
+                showAlert(AlertType.ERROR, "Lỗi", "Không thể hoàn tiền", e.getMessage());
+            }
+        }
+    }
+    
+    @FXML
+    private void addNewCustomer() {
+        // Open new customer form
+        try {
+            // This should be replaced with your actual form path
+            Parent root = FXMLLoader.load(getClass().getResource("/views/customer/AddCustomerView.fxml"));
+            Stage stage = new Stage();
+            stage.setTitle("Thêm khách hàng mới");
+            stage.setScene(new Scene(root));
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+        } catch (IOException e) {
+            showAlert(AlertType.ERROR, "Lỗi", "Không thể mở form thêm khách hàng", e.getMessage());
+        }
+    }
+    
+    @FXML
+    private void applyPromotionCode() {
+        String code = promotionCodeField.getText().trim();
+        if (code.isEmpty()) {
+            showAlert(AlertType.WARNING, "Cảnh báo", "Mã khuyến mãi trống", 
+                    "Vui lòng nhập mã khuyến mãi.");
+            return;
+        }
+        
+        // In real application, validate promotion code here
+        showAlert(AlertType.INFORMATION, "Thông báo", "Mã khuyến mãi", 
+                "Tính năng áp dụng mã khuyến mãi đang phát triển.");
+    }
+    
+    @FXML
+    private void cancelInvoice() {
+        // Reset form
+        resetInvoiceForm();
+    }
+    
+    @FXML
+    private void viewReport() {
         if (reportFromDatePicker.getValue() == null || reportToDatePicker.getValue() == null) {
             showAlert(AlertType.WARNING, "Cảnh báo", "Ngày không hợp lệ", "Vui lòng chọn khoảng thời gian.");
             return;
@@ -1312,7 +1374,7 @@ public class InvoiceViewController implements Initializable {
             
             try (PreparedStatement stmtTop = conn.prepareStatement(topServiceSql)) {
                 stmtTop.setTimestamp(1, Timestamp.valueOf(fromDate.atStartOfDay()));
-                stmtTop.setTimestamp(2, Timestamp.valueOf(                stmtTop.setTimestamp(2, Timestamp.valueOf(toDate.plusDays(1).atStartOfDay()));
+                stmtTop.setTimestamp(2, Timestamp.valueOf(toDate.plusDays(1).atStartOfDay()));
                 try (ResultSet rsTop = stmtTop.executeQuery()) {
                     if (rsTop.next()) {
                         String topServiceName = rsTop.getString("name");
@@ -1331,3 +1393,160 @@ public class InvoiceViewController implements Initializable {
             statusMessageLabel.setText("Lỗi: " + e.getMessage());
         }
     }
+    
+    private void generateServiceRevenueReport(LocalDate fromDate, LocalDate toDate) {
+        // Implementation for service revenue report
+        showAlert(AlertType.INFORMATION, "Thông báo", "Đang phát triển", 
+                "Tính năng báo cáo doanh thu theo dịch vụ đang được phát triển.");
+    }
+    
+    private void generatePaymentMethodRevenueReport(LocalDate fromDate, LocalDate toDate) {
+        // Implementation for payment method revenue report
+        showAlert(AlertType.INFORMATION, "Thông báo", "Đang phát triển", 
+                "Tính năng báo cáo doanh thu theo phương thức thanh toán đang được phát triển.");
+    }
+    
+    @FXML
+    private void exportToExcel() {
+        // Export report to Excel
+        if (revenueReports.isEmpty()) {
+            showAlert(AlertType.WARNING, "Cảnh báo", "Không có dữ liệu", 
+                    "Vui lòng tạo báo cáo trước khi xuất Excel.");
+            return;
+        }
+        
+        try {
+            // Create file chooser dialog
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Lưu báo cáo Excel");
+            fileChooser.getExtensionFilters().add(
+                    new FileChooser.ExtensionFilter("Excel Files", "*.xls", "*.xlsx"));
+            fileChooser.setInitialFileName("revenue_report.xlsx");
+            
+            // Show save dialog
+            File file = fileChooser.showSaveDialog(null);
+            if (file != null) {
+                // Export to Excel (implementation would depend on Excel library)
+                // For demo purposes, just create a CSV file
+                try (FileWriter writer = new FileWriter(file)) {
+                    // Write header
+                    writer.append("Ngày,Số hóa đơn,Doanh thu,Giảm giá,Khuyến mãi,Điểm tích lũy,Doanh thu thuần,Xu hướng\n");
+                    
+                    // Write data
+                    for (RevenueReport report : revenueReports) {
+                        writer.append(String.format("%s,%d,%,.0f,%,.0f,%,.0f,%,.0f,%,.0f,%s\n",
+                                report.getDate(),
+                                report.getInvoiceCount(),
+                                report.getRevenue(),
+                                report.getDiscount(),
+                                report.getPromotion(),
+                                report.getPoints(),
+                                report.getNetRevenue(),
+                                report.getTrend()
+                        ));
+                    }
+                    
+                    showAlert(AlertType.INFORMATION, "Thành công", "Đã xuất báo cáo", 
+                            "Báo cáo đã được lưu thành công tại:\n" + file.getAbsolutePath());
+                }
+            }
+        } catch (IOException e) {
+            showAlert(AlertType.ERROR, "Lỗi", "Không thể xuất báo cáo", e.getMessage());
+        }
+    }
+    
+    @FXML
+    private void printReport() {
+        // Print report
+        showAlert(AlertType.INFORMATION, "Thông báo", "Đang phát triển", 
+                "Tính năng in báo cáo đang được phát triển.");
+    }
+    
+    @FXML
+    private void resetFilter() {
+        fromDatePicker.setValue(LocalDate.now().minusDays(30));
+        toDatePicker.setValue(LocalDate.now());
+        statusFilter.setValue("Tất cả");
+        paymentMethodFilter.setValue("Tất cả");
+        searchField.clear();
+        loadInvoices();
+    }
+    
+    @FXML
+    private void showHelp() {
+        showAlert(AlertType.INFORMATION, "Trợ giúp", "Hướng dẫn sử dụng",
+                "Liên hệ quản trị viên để được hỗ trợ thêm.");
+    }
+    
+    @FXML
+    private void exitApplication() {
+        Stage stage = (Stage) invoiceTable.getScene().getWindow();
+        stage.close();
+    }
+    
+    private void showAlert(Alert.AlertType alertType, String title, String header, String content) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(header);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
+    
+    // Inner class for invoice items
+    public static class InvoiceItem {
+        private final int index;
+        private final String serviceName;
+        private int quantity;
+        private final double unitPrice;
+        private double total;
+        
+        public InvoiceItem(int index, String serviceName, int quantity, double unitPrice, double total) {
+            this.index = index;
+            this.serviceName = serviceName;
+            this.quantity = quantity;
+            this.unitPrice = unitPrice;
+            this.total = total;
+        }
+        
+        public int getIndex() { return index; }
+        public String getServiceName() { return serviceName; }
+        public int getQuantity() { return quantity; }
+        public void setQuantity(int quantity) { this.quantity = quantity; }
+        public double getUnitPrice() { return unitPrice; }
+        public double getTotal() { return total; }
+        public void setTotal(double total) { this.total = total; }
+    }
+    
+    // Inner class for revenue report
+    public static class RevenueReport {
+        private final String date;
+        private final int invoiceCount;
+        private final double revenue;
+        private final double discount;
+        private final double promotion;
+        private final double points;
+        private final double netRevenue;
+        private final String trend;
+        
+        public RevenueReport(String date, int invoiceCount, double revenue, double discount, 
+                             double promotion, double points, double netRevenue, String trend) {
+            this.date = date;
+            this.invoiceCount = invoiceCount;
+            this.revenue = revenue;
+            this.discount = discount;
+            this.promotion = promotion;
+            this.points = points;
+            this.netRevenue = netRevenue;
+            this.trend = trend;
+        }
+        
+        public String getDate() { return date; }
+        public int getInvoiceCount() { return invoiceCount; }
+        public double getRevenue() { return revenue; }
+        public double getDiscount() { return discount; }
+        public double getPromotion() { return promotion; }
+        public double getPoints() { return points; }
+        public double getNetRevenue() { return netRevenue; }
+        public String getTrend() { return trend; }
+    }
+}

@@ -11,8 +11,8 @@ public class Main extends Application {
             SceneSwitcher.setMainStage(primaryStage);
             
             // Bạn có thể chọn một trong các dòng sau để hiển thị màn hình mong muốn khi khởi động
-           SceneSwitcher.switchScene("home.fxml"); // Màn hình mặc định
-             //SceneSwitcher.switchScene("staff/booking_view.fxml"); // Màn hình đặt lịch
+           //SceneSwitcher.switchScene("home.fxml"); // Màn hình mặc định
+            SceneSwitcher.switchScene("staff/booking_view.fxml"); // Màn hình đặt lịch
              //SceneSwitcher.switchScene("staff/my_schedule.fxml"); // Màn hình lịch làm việc
              //SceneSwitcher.switchScene("staff/invoice_view.fxml"); // Màn hình hóa đơn
         } catch (Exception e) {

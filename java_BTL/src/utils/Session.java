@@ -58,14 +58,6 @@ public class Session {
     }
 
     /**
-     * Lấy nhân viên hiện tại
-     * @return Nhân viên hiện tại
-     */
-    public Staff getCurrentStaff() {
-        return currentStaff;
-    }
-
-    /**
      * Xóa toàn bộ session
      */
     public void clearSession() {
@@ -116,5 +108,13 @@ public class Session {
 
     public static void logout() {
         getInstance().clearSession();
+    }
+
+    /**
+     * Phương thức tiện ích để lấy nhân viên hiện tại
+     * @return Nhân viên hiện tại
+     */
+    public static Staff getCurrentStaff() {
+        return getInstance().currentStaff;
     }
 }
