@@ -1,4 +1,3 @@
-
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
@@ -227,14 +226,7 @@
                               <Region HBox.hgrow="ALWAYS" />
                               
                               <Label text="Loại xuất:" />
-                              <ComboBox fx:id="exportTypeSelector" prefWidth="150" promptText="Chọn loại xuất">
-                                  <items>
-                                      <ObservableList fx:factory="observableArrayList">
-                                          <String fx:value="Báo cáo thống kê" />
-                                          <String fx:value="Danh sách lịch đặt" />
-                                      </ObservableList>
-                                  </items>
-                              </ComboBox>
+                              <ComboBox fx:id="exportTypeSelector" prefWidth="150" promptText="Chọn loại xuất" />
                               <Button text="Xuất báo cáo" onAction="#exportReport" />
                            </HBox>
                         </VBox>
